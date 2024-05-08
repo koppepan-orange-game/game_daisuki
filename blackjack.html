@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>blackjack-daisuki</title>
+  <html lang="ja">
+  <meta charset="UTF-8">
+  <script src="blackjack.js"></script>
+  <style>
+    .gamebutton{
+      border: 2px solid #ff4040;
+      padding: 2px 3px;
+      background:#27c848;
+      cursor: grab;
+    }
+  </style>
+</head>
+<body>
+  <br><br><br><br><br><br><br>
+  <p align="center">
+  <span id="PlayerMoney"></span><br>
+  <br><b>dealer</b>
+  <br><span id="DealerValue">0</span>
+  <br><br><b>player</b>
+  <br><span id="PlayerValue">0</span>
+</p>
+<hr noshade="true">
+  <p align="center">
+  <span id="HitAndStandButton"></span>
+  <span id="ResetButton"><button class="gamebutton" onclick="reset()">start</button></span>
+  <span id="BetSpace"></span>
+  </p>
+  <p align="center" id="log">pless "start" to game start</p>
+<hr noshade="true">
+  <p align="center" id="Items">Items<br>
+    <span id="ItemsButtonTachi"></span>
+    <span id="Itemsdesu"></span>
+    <span id="ItemsButton"></span>
+  </p>
+<hr noshade="true">
+  <p align="center" id="Shop">Shop
+    <br><span id="PlayerWon"></span><br>
+    <i>decp-card</i><span>  decrease your point just five.  $1  </span><button onclick="BuyDecpCard()">buy</button><br>
+    <i>incp-card</i><span>　increase your point just five. $1  </span><button onclick="BuyIncpCard()">buy</button><br>
+  </p>
+</body>
+</html>
