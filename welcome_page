@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Are you want to play?</title></head>
+<body>
+<input type="text" id="inputText" placeholder="さて、合言葉は？">
+  <button onclick="showOutput()">送信</button>
+  <p id="output"></p>
+<script>
+    function showOutput() {
+    const input = document.getElementById('inputText').value;
+    const outputDiv = document.getElementById('output');
+    outputDiv.innerHTML = '';
+  
+    let redirectUrl;if (input.includes('readme')) {
+      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/readme.txt';
+    } else if (input.includes('blackjack')) {
+      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/black_jack.html';
+    } else if(input.includes('clickerofmugen')){
+      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen.html';
+    } else {
+      'パスワードが違います。';
+    }
+    const link = document.createElement('a')
+    link.href = redirectUrl;
+    link.textContent = 'success!';
+    link.target = '_blank'; // 新しいタブで開く
+    outputDiv.appendChild(link)
+    }
+</script>
+</body>
