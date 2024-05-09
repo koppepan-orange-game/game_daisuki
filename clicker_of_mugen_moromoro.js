@@ -51,7 +51,9 @@ let enemyprefixe1 = 0;
 let enemyprefixe2 = 0;
 let enemyprefixes1 = ['コッペパン好きな','猫耳の','メイド服を着た','かっこいい','ボカロ好きの','頭のおかしくなった','マカロンが好きな','ダークモカチップクリームフラペチーノを持った','猫になった'
                      ,'ドンファイのマスターフルコンを目指す','どっちかっていうと猫派な','犬が嫌いな','借り暮らしの','その日暮らしの','手に何か持ってないと落ち着かない','元','課題に追われる','白水色が好きな','承認欲求高めの'
-                     ,'「ぼっち・ざ・ろっく」が好きな', '「よふかしのうた」が好きな','「らき☆すた」が好きな','Minecraftが好きな','弾幕ゲームが好きな','ブルーアーカイブが好きな','第五人格が好きな','プロセカが好きな','#コンパスが好きな'];
+                     ,'「ぼっち・ざ・ろっく」が好きな', '「よふかしのうた」が好きな','「らき☆すた」が好きな','Minecraftが好きな','弾幕ゲームが好きな','ブルーアーカイブが好きな','第五人格が好きな','プロセカが好きな','#コンパスが好きな'
+                     ,'「ダーリンダンス」が好きな','「病み垢ステロイド」が好きな','「私は雨」が好きな','「ひみつの小学生」が好きな','「ひみつのユーフォー」が好きな','「メズマライザー」が好きな','「堕天」が好きな','「リアルにぶっとばす」が好きな','「魔法少女とちょこれゐと」が好きな','「パキパキ天使のハードラック」が好きな','「マーシャル・マキシマイザー」が好きな','「撫でんな」が好きな','「おくすり飲んで寝よう」が好きな','「ライアーダンサー」が好きな','「青春コンプレックス」が好きな','「ハルカミライ」が好きな','「青春のアーカイブ」が好きな'
+                     ,];
 let enemyprefixes2 = ['Discord信者','勇者','魔王','ゾンビ','先生','ドクター','マスター','西の高校生探偵','東の高校生探偵'
                      ,'ツインテ狩り','モス通い','ルフレ使い','真のヒロイン'
                      ,'Mac依存症','ぬいぐるみ依存症','レモンティー依存症','ヘッドフォン依存症','ZEPETO依存症','つぶグミ依存症','黒ピンク依存症','白水色依存症','']
@@ -146,9 +148,9 @@ function begin(){
         document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
         document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #000000;padding: 2px 3px;background: #50C878;cursor: pointer;}';
         // "zomusan"    
-        // EX さよならダァ！(また動画見て考えます)
+        // EX 相手の残り体力の半分を減らす。ひっさつまえば
         // NS 4の倍数のターンの時、強制的にエレキギターで殴る。攻撃力の3倍のダメージを与える。
-        // PS slashoflightを使った際、当たれば5倍だが、外れれば自分にダメージを与える。 // https://ankey.io/wordbooks/cjgs57a9io6g02p301u0?ranking_current=totalなんかいい感じによろ
+        // PS slashoflightを使った際、当たれば5倍だが、外れれば自分にダメージを与える。
     }
     document.getElementById('Thisdisappearsafterthegamestartbegin').innerHTML = ' ';
     document.getElementById('Thisdisappearsafterthegamestartnameinput').innerHTML = ' ';
@@ -261,7 +263,6 @@ async function NSaction(){
         NStimeout = 1;
     } else if((turncount % 4) == 0 && playername == 'zomusan'){
         disappear();
-        zomupower = 2;
         x = enemyhealth;
         y = enemyhealth;
         z = (playerattack * playerpower * zomupower * 2);
@@ -271,7 +272,7 @@ async function NSaction(){
         if(damage < 0){damage = 0};
         if(damage > y){damage = y};
         enemyhealth -= damage;
-        document.getElementById('log').textContent = '';
+        document.getElementById('log').textContent = zomuNSvoice[Math.floor(Math.random() * zomuNSvoice.length)];
         await delay(1000);
         document.getElementById('log').textContent = 'zomusanはエレキギターで' + enemyname + 'を殴った!';
         await delay(1000);
@@ -482,8 +483,8 @@ function disappear(){
 async function slash() {
     x = enemyhealth;
     y = enemyhealth;
-    x -= (playerattack * playerpower);
-    x = Math.floor(x);
+    x -= (playerattack * playerpower * zomupower);
+    x = Math.ceil(x);
     damage = y - x;
     if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();};
     if(playerskillbuff == 3){z = clowngambling[Math.floor(Math.random() * clowngambling.length)]; damage = damage * z; playerskillbuff = 0; bufftekiou(); document.getElementById('log').textContent = 'ダメージは' + z + '倍になった!!'; await delay(1000);};
@@ -504,7 +505,7 @@ async function slash() {
             x = enemyhealth;
             y = enemyhealth;
             x -= (playerattack * playerpower);
-            x = Math.floor(x);
+            x = Math.ceil(x);
             damage = y - x;
             if(damage < 0){damage = 0};
             if(damage > y){damage = y};
@@ -518,7 +519,7 @@ async function slash() {
                 x = enemyhealth;
                 y = enemyhealth;
                 x -= (playerattack * playerpower);
-                x = Math.floor(x);
+                x = Math.ceil(x);
                 damage = y - x;
                 if(damage < 0){damage = 0};
                 if(damage > y){damage = y};
@@ -538,8 +539,8 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower);
-            x = Math.floor(x);
+            x -= (playerattack * playerpower * zomupower);
+            x = Math.ceil(x);
             damage = y - x;
             if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();}
             if(playerskillbuff == 3){z = clowngambling[Math.floor(Math.random() * clowngambling.length)]; damage = damage * z; playerskillbuff = 0; bufftekiou(); document.getElementById('log').textContent = 'ダメージは' + z + '倍になった!!'; await delay(1000);};
@@ -565,8 +566,8 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower);
-            x = Math.floor(x);
+            x -= (playerattack * playerpower * zomupower);
+            x = Math.ceil(x);
             damage = y - x;
             if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();}
             if(playerskillbuff == 3){z = clowngambling[Math.floor(Math.random() * clowngambling.length)]; damage = damage * z; playerskillbuff = 0; bufftekiou(); document.getElementById('log').textContent = 'ダメージは' + z + '倍になった!!'; await delay(1000);};
@@ -638,7 +639,7 @@ async function slashoflight() {
         x = enemyhealth;
         y = enemyhealth;
         x -= (playerattack * 3 * playerpower);
-        x = Math.floor(x);
+        x = Math.ceil(x);
         damage = y - x;
         if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();}
         if(playerskillbuff == 3){z = clowngambling[Math.floor(Math.random() * clowngambling.length)]; damage = damage * z; playerskillbuff = 0; bufftekiou(); document.getElementById('log').textContent = 'ダメージは' + z + '倍になった!!'; await delay(1000);};
@@ -859,6 +860,8 @@ let touzokufourthslash = 0;
 let bomertension = 0;
 let bomerbombused = 0;
 let zomupower = 1;
+let zomuEXvoice = ['死にたくなったら言ってください。助けるんで','出てこいよ、そんなところで芋ってないでさ！','箪笥の中に隠れちゃダメっすよぉw'];
+let zomuNSvoice = ['ぶしゅしゅしゅしゅ！！','お前の考えなんて読めるんだよ','かまってぇや、マジで'];
 // skillの手続き
 async function skillact() {
     if (skillcooldown == 0){
@@ -926,14 +929,16 @@ async function skillact() {
         } else {document.getElementById('log').textContent = 'まだテンションが低い...!!'; skillcooldown = 'bomernull';document.getElementById('Skillbutton').innerHTML = ''}
     } else if (playername == 'zomusan'){
         disappear();
-        document.getElementById('log').textContent = 'さよならだァ！'; // ...ちょっと待って適当すぎるか?ww
-        document.getElementById('Skillbutton').innerHTML = '';       //これは仮だからね!!動画見てまた考えるで、一旦勉強をさせて下さい....w
-        skillcooldown = 20;
+        document.getElementById('log').textContent = zomuEXvoice[Math.floor(Math.random() * zomuEXvoice.length)];
+        document.getElementById('Skillbutton').innerHTML = ''; 
+        skillcooldown = 3;
         await delay(1000);
-        document.getElementById('log').textContent = enemyname + 'に' + enemyhealth + 'のダメージを与えた!';
-        enemyhealth = 0;
+        x = Math.ceil(enemyhealth * 0.5)
+        enemyhealth -= x;
+        document.getElementById('log').textContent = enemyname + 'に' + x + 'のダメージを与えた!';
         tekiou()
-        window.setTimeout(killedenemy, 1000)
+        zomupower = 2;
+        window.setTimeout(enemyorplayer, 1000)
     }
     }else {document.getElementById('log').textContent = 'skill is not ready...';}
 }
@@ -1167,7 +1172,7 @@ function nextenemy() {
     if(y !== 0){enemyprefixe1 = enemyprefixes1[Math.floor(Math.random() * enemyprefixes1.length)]}
     y = Math.floor(Math.random() * 3); // 1/2
     if(y !== 0){enemyprefixe2 = enemyprefixes2[Math.floor(Math.random() * enemyprefixes2.length)]}
-    if(enemyprefixe1 !== 0 && enemyprefixe2 !== 0){enemyname = enemyprefixe1 + enemyprefixe2 + ' ' + enemyname} // これが理想の幻想郷(?)
+    if(enemyprefixe1 !== 0 && enemyprefixe2 !== 0){enemyname = enemyprefixe1 + ' ' + enemyprefixe2 + ' ' + enemyname} // これが理想の幻想郷(?)
     else if (enemyprefixe1 !== 0 && enemyprefixe2 == 0){enemyname = enemyprefixe1 + ' ' + enemyname}
     else if (enemyprefixe1 == 0 && enemyprefixe2 !== 0){enemyname = enemyname}
     else {enemyname = enemyname}; // 敵に接頭辞を確率で付与します。意味はありません。じゃあなんでつけるんって思うよね。それはね、おもしろいからだよ　ひとえに愛だよ
@@ -1194,7 +1199,7 @@ function defeat() {
         playerhealth = Math.floor(playermaxhealth * 0.5)
         window.setTimeout(playerturn, 1000);}
     else
-    if (playerlevel < 3){saydefeats = ['あはは..負けちゃいましたね....防御力を上げると良いですよ!', 'あはは..負けちゃいましたね....double slashは運要素も少ないので強いですよ!', 'あはは..負けちゃいましたね....魔法にターン数制限はありません!いっぱい使っちゃいましょう!'];}
+    if (playerlevel < 3){saydefeats = ['あはは..負けちゃいましたね....防御力を上げると良いですよ!', 'あはは..負けちゃいましたね....double slashは運要素も少ないので強いですよ!', 'あはは..負けちゃいましたね....魔法にターン数制限はありません!いっぱい使っちゃいましょう!','あはは..負けちゃいましたね....mechanicは防御全振りで戦うと良いですよ!','あはは..負けちゃいましたね....zombieは生き返ることができるのでそれで慣れると良いですよ!'];}
     else {saydefeats = [playername + 'は力尽きた...残念でしたね！にはははは〜！', playername + 'は..まけました', '残念だったね!すごい惜しかったね!!', 'まけちゃったか..ねぇ、もう一回、やってみない?','あれあれ〜？まけちゃったんですか〜？？よっわw'];}
     document.getElementById('log').textContent = saydefeats[Math.floor(Math.random() * saydefeats.length)];
     window.setTimeout(reset, 2000)
@@ -1216,13 +1221,13 @@ function GoToShop(){
     document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><button class="button" id="ShopBuyWeapons" onclick="ShopBuyWeapons()">Buy Weapons</button><br><br><button class="button" id="ShopBuyArmors" onclick="ShopBuyArmors()">Buy Armors</button><br><br><button class="button" id="ShopBuyTools" onclick="ShopBuyTools()">Buy Tools</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
 }
 function ShopBuyWeapons(){
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>ここにはこんなものがあるけど、どうする？<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_weapons.txt"></iframe></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button><br><br><br><br><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>ここにはこんなものがあるけど、どうする？<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_weapons.txt"></iframe></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
 }
 function ShopBuyArmors(){
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>うちの店ではこんなものが売ってるよ<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_armors.txt"></iframe></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button><br><br><br><br><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>うちの店ではこんなものが売ってるよ<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_armors.txt"></iframe></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
 }
 function ShopBuyTools(){
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene">ちょ、ほんっとごめんね！もうちょっとまってね！！すぐに開店するから！！<br><br><br><br><br><button class="button" id="BackToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>'
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>いらっしゃいませぇぇぇぇぇ？？ご注文をどうぞ！！！！<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_tools.txt"></iframe></p><br><br><br><br><button class="button" id="BackToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
 }
 function GoToBossBattle(){
     document.getElementById('BattleScene').innerHTML = '<button class="button" onclick="TenBossBattleStart()">10LV Boss</button><br><br><br><br><button class="button" id="GoToCity" onclick="BackToCityFromBossBattle()">Go To City</button>';
