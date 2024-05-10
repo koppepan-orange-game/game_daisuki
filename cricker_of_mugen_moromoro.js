@@ -884,7 +884,6 @@ function nextenemy() {
     enemydebuff = 0;
     enemyskilldebuff = 0;
     bufftekiou()
-    mechanicturretbreak();
     enemylevel += (Math.floor(Math.random() * 3) - 1); // -1 ~ +1 
     if (playernametrick = 1){enemylevel += (Math.floor(Math.random() * 2));} // 0 ~ +1} // 名前付きのつよつよplayerのためのセプテット(?)
     if (enemylevel < 1){enemylevel = 1}
