@@ -800,7 +800,7 @@ async function enemyattack() {
     damage = playerhealth - x;
     if (damage < 0){damage = 0;}
     if (w == 0){damage = 0;}
-    else if(playerskillbuff == 6 && tokiarmor > 0){y = tokiarmor; tokiarmor -= damage; if(tokiarmor < 0){tokiarmor = 0}; z = y - tokiarmor; tokitekiou(); if(tokiarmor == 0){tokipower = 1; skillcooldown = 5; tokienelgy = 0; bufftekiou(); tokiarmor = 0; document.getElementById('AdditionalPlayerPoint').innerHTML = ''; document.getElementById('log').textContent = '解除!'; await delay(500);};}
+    else if(playerskillbuff == 6 && tokiarmor > 0){y = tokiarmor; tokiarmor -= damage; if(tokiarmor < 0){tokiarmor = 0}; z = y - tokiarmor; tokitekiou(); if(tokiarmor == 0){tokipower = 1; skillcooldown = 5; tokienelgy = 0; bufftekiou(); tokiarmor = 0; document.getElementById('AdditionalPlayerPoint').innerHTML = ''; document.getElementById('log').textContent = '解除!'; playerskillbuff = 0; await delay(500);};}
     else {playerhealth -= damage; playerhealth = Math.floor(playerhealth); z = y - playerhealth;}
     if(w == 0){document.getElementById('log').textContent = enemyname + 'はスタンした!!';}
     else if (z == 0){document.getElementById('log').textContent = 'miss! ' + playername + 'にダメージを与えられない!';}
