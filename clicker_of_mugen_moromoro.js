@@ -1217,18 +1217,170 @@ function StatusDisappear() {
 function GoToCity(){
     document.getElementById('BattleScene').innerHTML = '<button class="button" id="GoToBattle" onclick="GoToBattle()">Go To Battle</button><br><br><br><button class="button" id="GoToBossBattle" onclick="GoToBossBattle()">Go To Boss Battle</button><br><br><br><button class="button" id="GoToCityBattle" onclick="GoToShop()">Go To Shop</button><br><br><br>';
 } // document.getElementById("LevelPlate").src = 'level_plate_' + x + '.png';
+let nowshop = 0;
+let haveweapons = [];
+let havearmors = [];
+let havetools = [];
 function GoToShop(){
+    nowshop = 0;
     document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><button class="button" id="ShopBuyWeapons" onclick="ShopBuyWeapons()">Buy Weapons</button><br><br><button class="button" id="ShopBuyArmors" onclick="ShopBuyArmors()">Buy Armors</button><br><br><button class="button" id="ShopBuyTools" onclick="ShopBuyTools()">Buy Tools</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
 }
 function ShopBuyWeapons(){
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>ここにはこんなものがあるけど、どうする？<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_weapons.txt"></iframe></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
+    nowshop = 1;
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><span id="SHOPMONEY"></span><p>ここにはこんなものがあるけど、どうする？<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_weapons.txt"></iframe><br><input type="text" id="ShopInputText" minlength="2" maxlength="2" size="16" placeholder="write number here"><button class="button" onclick="ShopBuyButton()">Buy</button><br><span id="SHOPlog"></span></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span>';
+    SHOPmoneytekiou();
 }
 function ShopBuyArmors(){
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>うちの店ではこんなものが売ってるよ<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_armors.txt"></iframe></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
+    nowshop = 2;
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><span id="SHOPMONEY"></span><p>うちの店ではこんなものが売ってるよ<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_armors.txt"></iframe><br><input type="text" id="ShopInputText" minlength="2" maxlength="2" size="16" placeholder="write number here"><button class="button" onclick="ShopBuyButton()">Buy</button><br><span id="SHOPlog"></span></p><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span>';
+    SHOPmoneytekiou();
 }
 function ShopBuyTools(){
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p>いらっしゃいませぇぇぇぇぇ？？ご注文をどうぞ！！！！<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_tools.txt"></iframe></p><br><br><br><br><button class="button" id="BackToShop" onclick="GoToShop()">Back To Shop</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
+    nowshop = 3;
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><span id="SHOPMONEY"></span><p>いらっしゃいませぇぇぇぇぇ？？ご注文をどうぞ！！！！<br><iframe height="230" width="200" src="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen_shop_tools.txt"></iframe><br><input type="text" id="ShopInputText" minlength="2" maxlength="2" size="16" placeholder="write number here"><button class="button" onclick="ShopBuyButton()">Buy</button><br><span id="SHOPlog"></span></p><br><br><br><br><button class="button" id="BackToShop" onclick="GoToShop()">Back To Shop</button></span>';
+    SHOPmoneytekiou();
 }
+function ShopBuyButton(){
+    shopinputtext = document.getElementById('ShopInputText').value;
+    switch(shopinputtext){
+      case '01':
+        if(nowshop == 1){
+        if(money >= 20){money -= 20; haveweapons.push('木の棒');document.getElementById('SHOPlog').textContent = '木の棒を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 10){money -= 10; havearmors.push('マスク');document.getElementById('SHOPlog').textContent = 'マスクを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 3){
+        if(money >= 30){money -= 30; havetools.push('アスピリン');document.getElementById('SHOPlog').textContent = 'アスピリンを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '02':
+        if(nowshop == 1){
+        if(money >= 50){money -= 50; haveweapons.push('木刀');document.getElementById('SHOPlog').textContent = '木刀を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 20){money -= 20; havearmors.push('薄めの本');document.getElementById('SHOPlog').textContent = '薄い本を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 3){
+        if(money >= 50){money -= 50; havetools.push('パブロン');document.getElementById('SHOPlog').textContent = 'パブロンを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '03':
+        if(nowshop == 1){
+        if(money >= 100){money -= 100; haveweapons.push('竹刀');document.getElementById('SHOPlog').textContent = '竹刀を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 50){money -= 50; havearmors.push('木の板');document.getElementById('SHOPlog').textContent = '木の板を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 3){
+        if(money >= 100){money -= 100; havetools.push('トリプシン');document.getElementById('SHOPlog').textContent = 'トリプシンを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '04':
+        if(nowshop == 1){
+        if(money >= 200){money -= 200; haveweapons.push('石ころ');document.getElementById('SHOPlog').textContent = '石ころを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 100){money -= 100; havearmors.push('テッパン');document.getElementById('SHOPlog').textContent = 'テッパンを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 3){
+        if(money >= 500){money -= 500; havetools.push('ルル');document.getElementById('SHOPlog').textContent = 'ルルを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '05':
+        if(nowshop == 1){
+        if(money >= 300){money -= 300; haveweapons.push('大きな石');document.getElementById('SHOPlog').textContent = '大きな石を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 300){money -= 300; havearmors.push('鍋の蓋');document.getElementById('SHOPlog').textContent = '鍋の蓋を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '06':
+        if(nowshop == 1){
+        if(money >= 500){money -= 500; haveweapons.push('レンガ');document.getElementById('SHOPlog').textContent = 'レンガを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 500){money -= 500; havearmors.push('厚めの本');document.getElementById('SHOPlog').textContent = '厚めの本を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '07':
+        if(nowshop == 1){
+        if(money >= 20){money -= 20; haveweapons.push('薄めの紙');document.getElementById('SHOPlog').textContent = '薄めの紙を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } else if(nowshop == 2){
+        if(money >= 1000){money -= 1000; havearmors.push('ドア');document.getElementById('SHOPlog').textContent = 'ドアを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '08':
+        if(nowshop == 1){
+        if(money >= 77){money -= 77; haveweapons.push('カード');document.getElementById('SHOPlog').textContent = 'カードを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+      }
+      case '09':
+        if(nowshop == 1){
+        if(money >= 600){money -= 600; haveweapons.push('はさみ');document.getElementById('SHOPlog').textContent = 'はさみを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '10':
+        if(nowshop == 1){
+        if(money >= 1000){money -= 1000; haveweapons.push('ナイフ');document.getElementById('SHOPlog').textContent = 'ナイフを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '11':
+        if(nowshop == 3){
+        if(money >= 40){money -= 40; havetools.push('投げナイフ');document.getElementById('SHOPlog').textContent = '投げナイフを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        } // 4 8 12 30
+      case '12':
+        if(nowshop == 3){
+        if(money >= 80){money -= 80; havetools.push('トリッキーな変数');document.getElementById('SHOPlog').textContent = 'トリッキーな変数を購入しました!にはははは〜!!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '13':
+        if(nowshop == 3){
+        if(money >= 120){money -= 120; havetools.push('援護射撃');document.getElementById('SHOPlog').textContent = '援護射撃ライセンスを購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      case '14':
+        if(nowshop == 3){
+        if(money >= 300){money -= 300; havetools.push('ガラスの破片');document.getElementById('SHOPlog').textContent = 'ガラスの破片を購入しました!';}
+        else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        break;
+        }
+      default:
+        document.getElementById('SHOPlog').textContent = 'id doesnt exist...';
+        break;
+    }
+    SHOPmoneytekiou();
+    document.getElementById('ShopInputText').value = '';
+  }
+  function SHOPmoneytekiou(){
+    document.getElementById('SHOPMONEY').textContent = money + '€';
+  }
 function GoToBossBattle(){
     document.getElementById('BattleScene').innerHTML = '<button class="button" onclick="TenBossBattleStart()">10LV Boss</button><br><br><br><br><button class="button" id="GoToCity" onclick="BackToCityFromBossBattle()">Go To City</button>';
 }
