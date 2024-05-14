@@ -36,7 +36,7 @@ let skipcard = 3;
 let enemyname = 0;
 let enemynames =  ["古書館の魔術師", "トラブルメーカーな天才少女", "誰もが恐れる風紀委員長", "自称清楚系超天才病弱美少女ハッカー",'黒服'
                    ,"アリウス生徒","ユスティナ信徒","ヴァルキューレ生徒","ゲヘナ生徒","風紀委員","救急医学部員","温泉開発部員","山海経生徒","トリニティ生徒","正義実現委員会部員","百鬼夜行生徒","魑魅一座","ミレニアム生徒","スケバン","ヘルメット団","オートマタ"];
-                   // 名前の元!紹介! 全てブルーアーカイブ
+                   // 名前の元 全てブルーアーカイブ
 let enemyprefixe1 = 0;
 let enemyprefixe2 = 0;
 let enemyprefixes = ['コッペパン好きな','猫耳の','メイド服を着た','かっこいい','ボカロ好きの','頭のおかしくなった','マカロンが好きな','Discord信者の','勇者..のコスプレをした','魔王..のコスプレをした','ゾンビ..のコスプレをした','ダークモカチップクリームフラペチーノを持った','猫になった','真のヒロイン'
@@ -68,7 +68,7 @@ function bufftekiou(){
     if(playerskillbuff == 2){document.getElementById('PlayerSkillBuff').textContent = 'null';}
     if(playerskillbuff == 3){document.getElementById('PlayerSkillBuff').textContent = 'null';}
     if(playerskillbuff == 4){document.getElementById('PlayerSkillBuff').textContent = 'null';}
-    if(playerskillbuff == 5){document.getElementById('PlayerSkillBuff').textContent = 'null';}   
+    if(playerskillbuff == 5){document.getElementById('PlayerSkillBuff').textContent = 'slacking off';}   
     if(playerskillbuff == 6){document.getElementById('PlayerSkillBuff').textContent = 'Abi Eshuf';} 
 }
 function delay(ms) {
@@ -103,6 +103,14 @@ function begin(){
         // 「戦術的判断」
         // PS 重装甲時でのslashの使用回数に応じ、攻撃力が一時的に1.5倍/2倍/2.5倍になる。
         // 「目には目を」
+    } else if (playername == 'utage'){
+        playernametrick = 1;
+        document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
+        document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #4f4c7d;padding: 2px 3px;background: #e8e8e8;cursor: pointer;}';
+        // EX 2ターン動けないが、体力が1割ずつ回復する. id = 5
+        // NS 2ターンごとに攻撃力上昇。
+        // PS 攻撃が命中すると、少し回復する
+        // SS 回復アイテムが使用できない。
     }
     document.getElementById('Thisdisappearsafterthegamestartbegin').innerHTML = ' ';
     document.getElementById('Thisdisappearsafterthegamestartnameinput').innerHTML = ' ';
@@ -137,6 +145,7 @@ function reset() {
     alicepower = 1; // アリスのパワーです。
     tokienelgy = 0; // トキのエネルギーです。
     tokipower = 1; // トキのパワーです。
+    utagepower = 1; // ウタゲのパワーです。
     tekiou()
     document.getElementById('log').textContent = 'ゲーム開始です！！';
     window.setTimeout(start,1000);
@@ -168,7 +177,6 @@ function start(){
 function turncountincrease(){turncount += 1; document.getElementById('TurnCount').textContent = turncount;}
 function SkillCooldownDecrease(){
     if (skillcooldown > 0){skillcooldown -= 1;};
-    if (skillcooldown == 0){document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';};
     if (skillcooldown == 'bomernull'){if(bomertension >= 10){document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';}};
     if (skillcooldown == 'tokinull'){if(playerskillbuff == 6){document.getElementById('Skillbutton').innerHTML = ' ';}else skillcooldown = 5;;};
 }
@@ -198,10 +206,29 @@ async function NSaction(){
         if(enemyhealth <= 0){enemyhealth = 0; tekiou();};
         if (enemyhealth == 0){window.setTimeout(killedenemy,1000);}
         else {window.setTimeout(enemieturn,1000);}
+    } else if ((turncount % 5) == 0 && playername == 'utage'){
+        utagepower += 0.2;
+        document.getElementById('log').textContent = '私が必要かな？';
+        NStimeout = 1;
     }
 }
-async function playerturn() {
+async function playerturn(){
+    if(playerskillbuff == 5){
+        disappear();
+        await delay(1000);
+        x = Math.ceil(playerdefense * 0.5);
+        if(x == 0){x = 1};
+        playerhealth += x;
+        if(playerhealth > playermaxhealth){playerhealth = playermaxhealth};
+        tekiou();
+        document.getElementById('log').textContent = '体力が' + x + '回復した！';
+        skillcooldown = 6;
+        playerskillbuff = 0;
+        bufftekiou();
+        window.setTimeout(enemyorplayer, 1000);
+    } else {
     if (NStimeout == 1){await delay(1000); NStimeout = 0;};
+    if (skillcooldown == 0){document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';};
     if (turn !== 3){turn = 1;};
     phase = 1;
     document.getElementById('log').textContent = 'あなたのターンです！';
@@ -209,8 +236,9 @@ async function playerturn() {
     document.getElementById('select2').textContent = 'magic';
     document.getElementById('select3').textContent = 'tools';
     document.getElementById('back').textContent = 'pass';
-    errorcheck()
-};
+    errorcheck();
+    }
+}
 // 選択ボタン
 function select1(){
     if (phase == 1) {
@@ -394,7 +422,7 @@ function disappear(){
 async function slash() {
     x = enemyhealth;
     y = enemyhealth;
-    x -= (playerattack * playerpower * alicepower * tokipower);
+    x -= (playerattack * playerpower * alicepower * tokipower * utagepower);
     x = Math.ceil(x);
     damage = y - x;
     if(damage < 0){damage = 0};
@@ -414,7 +442,7 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower * alicepower * tokipower);
+            x -= (playerattack * playerpower * alicepower * tokipower * utagepower);
             x = Math.ceil(x);
             damage = y - x;
             if(damage < 0){damage = 0};
@@ -439,7 +467,7 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower * alicepower * tokipower);
+            x -= (playerattack * playerpower * alicepower * tokipower * utagepower);
             x = Math.ceil(x);
             damage = y - x;
             if(damage < 0){damage = 0};
@@ -514,7 +542,7 @@ async function slashoflight() {
     if (x == 0) {
         x = enemyhealth;
         y = enemyhealth;
-        x -= (playerattack * 3 * playerpower * alicepower);
+        x -= (playerattack * 3 * playerpower * alicepower * tokipower * utagepower);
         x = Math.ceil(x);
         damage = y - x;
         if(damage < 0){damage = 0};
@@ -689,11 +717,17 @@ async function Random(){
 
 // playerの道具
 function Potion() {
+    if(playername == 'utage'){
+    document.getElementById('log').textContent = '飲んだ...だが効果はなかった!';
+    potion -= 1;
+    window.setTimeout(playerturn, 1000);
+    }else{
     playerhealth = playermaxhealth
     tekiou();
     document.getElementById('log').textContent = '　　　全　　　回　　　復　　　';
     potion -= 1;
-    window.setTimeout(playerturn, 1000)
+    window.setTimeout(playerturn, 1000);
+    }
 }
 function Bomb() {
     enemyhealth = 0;
@@ -708,22 +742,6 @@ function Skipcard() {
     skipcard -= 1;
     window.setTimeout(playerturn, 1000)
 }
-// enemieturnまでの道のり
-function enemyorplayer(){
-    if (turn == 1){
-        y = 1;
-        if (playerbuff == 5){y = Math.floor(Math.random() * 5);}
-        if (playerbuff == 6){y = Math.floor(Math.random() * 3);}
-        if (y == 0){
-            document.getElementById('log').textContent = 'Lucky♪';
-            window.setTimeout(playerturn, 1000)
-        } else {enemieturn()}
-        } else if (turn == 3) {
-            document.getElementById('log').textContent = 'スキップ!!!';
-            window.setTimeout(playerturn, 1000)
-            turn = 1;
-        }
-}
 let aliceenelgy = 0;
 let alicepower = 1;
 let aliceEXvoice = ['魔力充填100パーセント…行きます!','ターゲット確認！出力臨界点突破！','悪を撃ち砕く正義の一撃…。','光よ！エナジーオーバーロード…リリース。','この光に意志を込めて…貫け！バランス崩壊！','アリス、全力でいきます。','世界の 法則が 崩壊します！','世界の 法則が 崩壊します！']
@@ -733,6 +751,8 @@ let tokienelgy = 0;
 let tokipower = 1;
 let tokiEXvoice1 = ['装着完了。','全力で参ります。','戦闘を開始します。']
 let tokiEXvoice2 = ['これが私の、全力！','目標確認、ロックオン！','アビ・エシュフ、殲滅モード！','アビ・エシュフ、殲滅モード！','はあぁっ！','発射！']
+let utagepower = 1;
+let utageEXvoice = ['いっただきま〜す','ふふーん','どこ斬ればいいのかな','いいとこついてれば痛くないからね','いらないパーツあったらちょうだ〜い'];
 // skillの手続き
 async function skillact() {
     if (skillcooldown == 0){
@@ -772,6 +792,21 @@ async function skillact() {
         tokienelgy = 3;
         document.getElementById('log').textContent = tokiEXvoice1[Math.floor(Math.random() * tokiEXvoice1.length)];
         skillcooldown = 'tokinull';
+    } else if(playername == 'utage'){
+        disappear();
+        document.getElementById('Skillbutton').innerHTML = '';
+        document.getElementById('log').textContent = utageEXvoice[Math.floor(Math.random() * utageEXvoice.length)];
+        playerskillbuff = 5;
+        bufftekiou();
+        await delay(1000);
+        x = Math.ceil(playerdefense * 0.5);
+        if(x == 0){x = 1};
+        playerhealth += x;
+        if(playerhealth > playermaxhealth){playerhealth = playermaxhealth};
+        tekiou();
+        document.getElementById('log').textContent = '体力が' + x + '回復した！';
+        skillcooldown = 'utagenull';
+        window.setTimeout(enemyorplayer, 1000);
     }
     }else {document.getElementById('log').textContent = 'skill is not ready...';}
 }
@@ -781,6 +816,22 @@ function alicetekiou(){
 function tokitekiou(){
     document.getElementById('TokiArmor').textContent = tokiarmor;
     document.getElementById('TokiMaxArmor').textContent = tokimaxarmor;
+}
+// enemieturnまでの道のり
+function enemyorplayer(){
+    if (turn == 1 || turn == 2){
+        y = 1;
+        if (playerbuff == 5){y = Math.floor(Math.random() * 5);}
+        if (playerbuff == 6){y = Math.floor(Math.random() * 3);}
+        if (y == 0){
+            document.getElementById('log').textContent = 'Lucky♪';
+            window.setTimeout(playerturn, 1000)
+        } else {enemieturn()}
+        } else if (turn == 3) {
+            document.getElementById('log').textContent = 'スキップ!!!';
+            window.setTimeout(playerturn, 1000)
+            turn = 1;   
+        }
 }
 // enemyの手続き
 async function enemieturn() {
@@ -800,7 +851,7 @@ async function enemyattack() {
     damage = playerhealth - x;
     if (damage < 0){damage = 0;}
     if (w == 0){damage = 0;}
-    else if(playerskillbuff == 6 && tokiarmor > 0){y = tokiarmor; tokiarmor -= damage; if(tokiarmor < 0){tokiarmor = 0}; z = y - tokiarmor; tokitekiou(); if(tokiarmor == 0){tokipower = 1; skillcooldown = 5; tokienelgy = 0; bufftekiou(); tokiarmor = 0; document.getElementById('AdditionalPlayerPoint').innerHTML = ''; document.getElementById('log').textContent = '解除!'; playerskillbuff = 0; await delay(500);};}
+    else if(playerskillbuff == 6 && tokiarmor > 0){y = tokiarmor; tokiarmor -= damage; if(tokiarmor < 0){tokiarmor = 0}; z = y - tokiarmor; tokitekiou(); if(tokiarmor == 0){tokipower = 1; skillcooldown = 5; tokienelgy = 0; playerskillbuff = 0; bufftekiou(); tokiarmor = 0; document.getElementById('AdditionalPlayerPoint').innerHTML = ''; document.getElementById('log').textContent = '解除!'; await delay(500);};}
     else {playerhealth -= damage; playerhealth = Math.floor(playerhealth); z = y - playerhealth;}
     if(w == 0){document.getElementById('log').textContent = enemyname + 'はスタンした!!';}
     else if (z == 0){document.getElementById('log').textContent = 'miss! ' + playername + 'にダメージを与えられない!';}
@@ -848,6 +899,8 @@ async function killedenemy() {
     y = playerexp - x;
     document.getElementById('log').textContent = enemyname + 'を倒した!';
     if(playername == 'alice'){alicepower = 1;};
+    if(playername == 'toki'){tokipower = 1;};
+    if(playername == 'utage'){utagepower = 1;};
     window.setTimeout(expget, 1000)
 }
 function expget(){
