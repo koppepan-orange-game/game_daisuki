@@ -431,6 +431,7 @@ async function slash() {
     document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
     if (enemyhealth < 0){enemyhealth = 0};
     tekiou();
+    if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();};
     if (enemyhealth == 0){
         window.setTimeout(killedenemy, 1000);
     } else {window.setTimeout(enemyorplayer, 1000)};
@@ -453,11 +454,10 @@ async function doubleslash() {
         document.getElementById('log').textContent = 'miss! ダメージを与えられない!';
     } else {
     document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
-    if (enemyhealth < 0){
-        enemyhealth = 0
-    }
-    }
+    if (enemyhealth < 0){enemyhealth = 0}
     tekiou();
+    if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();};
+    }
     if (enemyhealth == 0){
         window.setTimeout(killedenemy, 1000)
     } else {
@@ -481,8 +481,9 @@ async function doubleslash() {
             await delay(1000);
             document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
                 if (enemyhealth < 0){enemyhealth = 0}
-                if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
                 tekiou();
+                if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();};
+                if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
         }
         window.setTimeout(enemyorplayer, 1000)
     }
@@ -550,8 +551,9 @@ async function slashoflight() {
         enemyhealth -= damage;
         document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
         if (enemyhealth < 0){enemyhealth = 0}
-        if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
         tekiou();   
+        if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou()};
+        if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
     } else {document.getElementById('log').textContent = 'miss! ダメージを与えられない!';}
     window.setTimeout(enemyorplayer, 1000)
 }
