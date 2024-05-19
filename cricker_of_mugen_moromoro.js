@@ -19,6 +19,7 @@ let playerlevel = 1;
 let enemylevel = 1;
 let turn = 0;
 let turncount = 0;
+let turnofcount = 0;
 let phase = 0;
 let w = 0;
 let x = 0;
@@ -46,6 +47,7 @@ let enemyprefixes = ['コッペパン好きな','猫耳の','メイド服を着�
 let saydefeats = 0;
 let NStimeout = 0;
 let skillcooldown = 0;
+let allowchange = 0;
 function tekiou(){
     document.getElementById('EnemyHealth').textContent = enemyhealth;
     document.getElementById('PlayerHealth').textContent = playerhealth;
@@ -64,7 +66,7 @@ function bufftekiou(){
     if(enemyskilldebuff == 0){document.getElementById('EnemySkillDebuff').textContent = '';}
     if(enemyskilldebuff == 1){document.getElementById('EnemySkillDebuff').textContent = '';}
     if(playerskillbuff == 0){document.getElementById('PlayerSkillBuff').textContent = '';}
-    if(playerskillbuff == 1){document.getElementById('PlayerSkillBuff').textContent = 'null';}
+    if(playerskillbuff == 1){document.getElementById('PlayerSkillBuff').textContent = 'suichu gengan';}
     if(playerskillbuff == 2){document.getElementById('PlayerSkillBuff').textContent = 'null';}
     if(playerskillbuff == 3){document.getElementById('PlayerSkillBuff').textContent = 'null';}
     if(playerskillbuff == 4){document.getElementById('PlayerSkillBuff').textContent = 'null';}
@@ -85,6 +87,7 @@ function begin(){
         document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #4f4c7d;padding: 2px 3px;background: #e8e8e8;cursor: pointer;}';
         document.getElementById('AdditionalPlayerPoint').innerHTML = '<br><i>エネルギー:</i><i id="AliceEnelgy"></i>';
         alicetekiou()
+        // "toki"(トキ)[ブルーアーカイブ]
         // EX 敵に攻撃力の2倍のダメージ。エネルギーの溜め具合によってダメージ量は3倍/4倍に増加します。
         // 「世界の 法則が 崩壊します！」
         // NS 2の倍数のターンの時、エネルギーを1チャージする。(最大2)
@@ -96,6 +99,7 @@ function begin(){
         document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
         document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #3acbe8;padding: 2px 3px;background: #ffffff;cursor: pointer;}';
         document.getElementById('AdditionalPlayerPoint').innerHTML = '';
+        // "alice"(アリス)[ブルーアーカイブ]
         // EX 重装甲を着て、シールドを獲得する。
         // この状態の時にslashを使うと通常の1.5倍のダメージ。しかし3回使うと重装甲は取れてしまう。
         // 「システム：アビ・エシュフ」
@@ -106,11 +110,26 @@ function begin(){
     } else if (playername == 'utage'){
         playernametrick = 1;
         document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
-        document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #4f4c7d;padding: 2px 3px;background: #e8e8e8;cursor: pointer;}';
+        document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #C7A252; padding: 2px 3px;background: #717375; cursor: pointer; color: #ffffff;} body{background-color: #4D4D4F; color: #ffffff;}';
+        // "utage"(ウタゲ)[アークナイツ]
         // EX 2ターン動けないが、体力が1割ずつ回復する. id = 5
         // NS 2ターンごとに攻撃力上昇。
         // PS 攻撃が命中すると、少し回復する
         // SS 回復アイテムが使用できない。
+    } else if(playername == 'monarin'){
+        playernametrick = 1;
+        playername = 'mona';
+        document.getElementById('PlayerName').textContent = playername;
+        document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
+        document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #5F4894;padding: 2px 3px;background: #6495ED;cursor: pointer;}';
+        document.getElementById('ChangeButton').innerHTML = '<br><br><button class="button" onclick="ChangePlayer()">change</button>';
+        // "monarin"(モナ&春菱)[原神]
+        // EX モナ:次の攻撃3倍。水付着。スタン。
+        //    春菱:敵に毎ターン火を付着させ、ダメージを与える渦を付与。4ターン消滅
+        // NS モナ:3ターンごとに壁を召喚。毎ターン水付着｡(2ターン消滅) //ok
+        //    春菱:3ターンごとに敵に攻撃力の2倍のダメージ。炎付着。
+        // PS changeを使うとプレイヤーが切り替わる(1ターン1回) //ok
+        // SS 敵が水/炎付着状態の場合、炎/水を当てると1.5倍のダメージ。
     }
     document.getElementById('Thisdisappearsafterthegamestartbegin').innerHTML = ' ';
     document.getElementById('Thisdisappearsafterthegamestartnameinput').innerHTML = ' ';
@@ -141,11 +160,12 @@ function reset() {
     skipcard = 3;
     skillcooldown = 0;
     SkillCooldownDecrease()
+    allowchange = 0;
     aliceenelgy = 1; // アリスのエネルギーです。
     alicepower = 1; // アリスのパワーです。
     tokienelgy = 0; // トキのエネルギーです。
     tokipower = 1; // トキのパワーです。
-    utagepower = 1; // ウタゲのパワーです。
+    utagepower = 0; // ウタゲのパワーです。
     tekiou()
     document.getElementById('log').textContent = 'ゲーム開始です！！';
     window.setTimeout(start,1000);
@@ -207,8 +227,18 @@ async function NSaction(){
         if (enemyhealth == 0){window.setTimeout(killedenemy,1000);}
         else {window.setTimeout(enemieturn,1000);}
     } else if ((turncount % 5) == 0 && playername == 'utage'){
-        utagepower += 0.2;
+        utagepower += 1;
         document.getElementById('log').textContent = '私が必要かな？';
+        NStimeout = 1;
+    } else if((turncount % 3) == 0 && playername == 'mona' && playerskillbuff !== 1){
+        playerskillbuff = 1;
+        bufftekiou();
+        turnofcount = 3;
+        x = Math.ceil(playermaxhealth * 0.4);
+        document.getElementById('PlayerFriendFront').innerHTML = '<br><br><b><font color="#0067C0">unmeino kyoei</font></b>  <br><span id="MonaKyoeiHealth">0</span>/<span id="MonaKyoeiMaxHealth">0</span>';
+        monakyoeimaxhealth = x; monakyoeihealth = x;
+        monakyoeitekiou();
+        document.getElementById('log').textContent = monaNSvoice[Math.floor(Math.random() * monaNSvoice.length)];
         NStimeout = 1;
     }
 }
@@ -227,9 +257,11 @@ async function playerturn(){
         bufftekiou();
         window.setTimeout(enemyorplayer, 1000);
     } else {
+    if (turnofcount > 0){turnofcount -= 1;};
     if (NStimeout == 1){await delay(1000); NStimeout = 0;};
     if (skillcooldown == 0){document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';};
     if (turn !== 3){turn = 1;};
+    allowchange = 0;
     phase = 1;
     document.getElementById('log').textContent = 'あなたのターンです！';
     document.getElementById('select1').textContent = 'attack';
@@ -422,7 +454,7 @@ function disappear(){
 async function slash() {
     x = enemyhealth;
     y = enemyhealth;
-    x -= (playerattack * playerpower * alicepower * tokipower * utagepower);
+    x -= (playerattack * playerpower * alicepower * tokipower + utagepower);
     x = Math.ceil(x);
     damage = y - x;
     if(damage < 0){damage = 0};
@@ -431,7 +463,7 @@ async function slash() {
     document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
     if (enemyhealth < 0){enemyhealth = 0};
     tekiou();
-    if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();};
+    if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
     if (enemyhealth == 0){
         window.setTimeout(killedenemy, 1000);
     } else {window.setTimeout(enemyorplayer, 1000)};
@@ -443,7 +475,7 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower * alicepower * tokipower * utagepower);
+            x -= (playerattack * playerpower * alicepower * tokipower + utagepower);
             x = Math.ceil(x);
             damage = y - x;
             if(damage < 0){damage = 0};
@@ -456,7 +488,7 @@ async function doubleslash() {
     document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
     if (enemyhealth < 0){enemyhealth = 0}
     tekiou();
-    if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();};
+    if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
     }
     if (enemyhealth == 0){
         window.setTimeout(killedenemy, 1000)
@@ -467,7 +499,7 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower * alicepower * tokipower * utagepower);
+            x -= (playerattack * playerpower * alicepower * tokipower + utagepower);
             x = Math.ceil(x);
             damage = y - x;
             if(damage < 0){damage = 0};
@@ -482,7 +514,7 @@ async function doubleslash() {
             document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
                 if (enemyhealth < 0){enemyhealth = 0}
                 tekiou();
-                if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();};
+                if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
                 if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
         }
         window.setTimeout(enemyorplayer, 1000)
@@ -543,7 +575,7 @@ async function slashoflight() {
     if (x == 0) {
         x = enemyhealth;
         y = enemyhealth;
-        x -= (playerattack * 3 * playerpower * alicepower * tokipower * utagepower);
+        x -= (playerattack * 3 * playerpower * alicepower * tokipower + utagepower);
         x = Math.ceil(x);
         damage = y - x;
         if(damage < 0){damage = 0};
@@ -552,7 +584,7 @@ async function slashoflight() {
         document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
         if (enemyhealth < 0){enemyhealth = 0}
         tekiou();   
-        if(playername == 'utage'){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou()};
+        if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} z *= 2; playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
         if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
     } else {document.getElementById('log').textContent = 'miss! ダメージを与えられない!';}
     window.setTimeout(enemyorplayer, 1000)
@@ -574,18 +606,35 @@ async function slashoflight() {
 // random ランダムな魔法を使用する
 function magic() {
     if (playermp > 0){
-    if (z == 'heal') {Heal();}
-    else if (z == 'power') {Power();}
-    else if (z == 'shell') {Shell();}
-    else if (z == 'poison') {Poison();}
-    else if (z == 'healer than') {Healerthan();}
-    else if (z == 'luck') {Luck();}
-    else if (z == 'more power') {Morepower();}
-    else if (z == 'more shell') {Moreshell();}
-    else if (z == 'deadly poison') {Deadlypoison();}
-    else if (z == 'the healest') {Thehealest();}
-    else if (z == 'greatluck') {Greatluck();}
-    else if (z == 'random') {Random();};
+        switch(z){
+        case 'heal':
+            Heal(); break;
+        case 'power':
+            Power(); break;
+        case 'shell':
+            Shell(); break;
+        case 'poison':
+            Poison(); break;
+        case 'healer than':
+            Healerthan(); break;
+        case 'luck':
+            Luck(); break;
+        case 'more power':
+            Morepower(); break;
+        case 'more shell':
+            Moreshell(); break;
+        case 'deadly poison':
+            Deadlypoison(); break;
+        case 'the healest':
+            Thehealest(); break;
+        case 'greatluck':
+            Greatluck(); break;
+        case 'random':
+            Random(); break;
+        default:
+            document.getElementById('log').textContent = 'errrrrrr';
+            break;
+        }
     playermp -= 1;
     } else {
         document.getElementById('log').textContent = 'not enough mp...';
@@ -744,6 +793,21 @@ function Skipcard() {
     skipcard -= 1;
     window.setTimeout(playerturn, 1000)
 }
+function ChangePlayer(){
+    if(allowchange == 0){
+        if(playername == 'mona'){
+            playername = 'shanrin';
+            document.getElementById('PlayerName').textContent = playername;
+            document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #FFD700;padding: 2px 3px;background: #F15B47;cursor: pointer;}';
+            allowchange = 1;
+        }else if(playername == 'shanrin'){
+            playername = 'mona';
+            document.getElementById('PlayerName').textContent = playername;
+            document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #5F4894;padding: 2px 3px;background: #6495ED;cursor: pointer;}';
+            allowchange = 1;
+        }
+    }
+}
 let aliceenelgy = 0;
 let alicepower = 1;
 let aliceEXvoice = ['魔力充填100パーセント…行きます!','ターゲット確認！出力臨界点突破！','悪を撃ち砕く正義の一撃…。','光よ！エナジーオーバーロード…リリース。','この光に意志を込めて…貫け！バランス崩壊！','アリス、全力でいきます。','世界の 法則が 崩壊します！','世界の 法則が 崩壊します！']
@@ -755,6 +819,13 @@ let tokiEXvoice1 = ['装着完了。','全力で参ります。','戦闘を開�
 let tokiEXvoice2 = ['これが私の、全力！','目標確認、ロックオン！','アビ・エシュフ、殲滅モード！','アビ・エシュフ、殲滅モード！','はあぁっ！','発射！']
 let utagepower = 1;
 let utageEXvoice = ['いっただきま〜す','ふふーん','どこ斬ればいいのかな','いいとこついてれば痛くないからね','いらないパーツあったらちょうだ〜い'];
+let enemywithelement = 0; //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
+let monakyoeihealth = 0;
+let monakyoeimaxhealth = 0;
+let monaNSvoice = ['水中幻願！','運命よ、水面に映るのです！','運命の虚栄！'];
+let monaEXvoice = ['運命には逆らえません！','運命よ、ここにいでよ！','これが運命です！','これが運命です！'];
+let shanrinNSvoice = ['グゥオパァー、火を噴け！','グゥオパァー、火を噴け！','アツアツでしょ','料理の時間だよ！'];
+let shanrinEXvoice = ['アハ...ハァ！','話が通じないなら、叩くまででしょ〜','師匠の技を食らいなさい！'];
 // skillの手続き
 async function skillact() {
     if (skillcooldown == 0){
@@ -819,6 +890,17 @@ function tokitekiou(){
     document.getElementById('TokiArmor').textContent = tokiarmor;
     document.getElementById('TokiMaxArmor').textContent = tokimaxarmor;
 }
+function monakyoeitekiou(){
+    document.getElementById('MonaKyoeiMaxHealth').textContent = monakyoeimaxhealth;
+    document.getElementById('MonaKyoeiHealth').textContent = monakyoeihealth;
+    if(monakyoeihealth <= 0){monakyoeihealth = 0; monakyoeibreak();};
+    if(turnofcount == 0){monakyoeibreak();}
+}
+function monakyoeibreak(){
+    document.getElementById('PlayerFriendFront').innerHTML = '';
+    playerskillbuff = 0;
+    bufftekiou();
+}
 // enemieturnまでの道のり
 function enemyorplayer(){
     if (turn == 1 || turn == 2){
@@ -854,12 +936,15 @@ async function enemyattack() {
     if (damage < 0){damage = 0;}
     if (w == 0){damage = 0;}
     else if(playerskillbuff == 6 && tokiarmor > 0){y = tokiarmor; tokiarmor -= damage; if(tokiarmor < 0){tokiarmor = 0}; z = y - tokiarmor; tokitekiou(); if(tokiarmor == 0){tokipower = 1; skillcooldown = 5; tokienelgy = 0; playerskillbuff = 0; bufftekiou(); tokiarmor = 0; document.getElementById('AdditionalPlayerPoint').innerHTML = ''; document.getElementById('log').textContent = '解除!'; await delay(500);};}
+    else if (playerskillbuff == 1){y = monakyoeihealth; monakyoeihealth -= damage; if(monakyoeihealth < 0){monakyoeihealth = 0}; monakyoeihealth = Math.floor(monakyoeihealth);  monakyoeitekiou(); damage = y - monakyoeihealth;}
     else {playerhealth -= damage; playerhealth = Math.floor(playerhealth); z = y - playerhealth;}
     if(w == 0){document.getElementById('log').textContent = enemyname + 'はスタンした!!';}
     else if (z == 0){document.getElementById('log').textContent = 'miss! ' + playername + 'にダメージを与えられない!';}
     if (playerhealth < 0){playerhealth = 0}
-    if (playerhealth == 0){defeat(); turn = 0;}
     tekiou();
+    if (playerhealth == 0){window.setTimeout(defeat, 1000); turn = 0;};
+    if (playerskillbuff == 1){document.getElementById('log').textContent = 'unmeinokyoeiに' + damage + 'のダメージ!';}
+    else {document.getElementById('log').textContent = playername + 'に' + damage + 'のダメージ!';};
     if (turn == 2){
     if (enemydebuff == 1) {
         x = enemyhealth;
@@ -890,6 +975,7 @@ async function enemyattack() {
         turncountincrease()
         SkillCooldownDecrease()
         NSaction()
+        if(playerskillbuff == 1){monakyoeitekiou();}
     }
 }
 }
@@ -902,7 +988,7 @@ async function killedenemy() {
     document.getElementById('log').textContent = enemyname + 'を倒した!';
     if(playername == 'alice'){alicepower = 1;};
     if(playername == 'toki'){tokipower = 1;};
-    if(playername == 'utage'){utagepower = 1;};
+    if(playername == 'utage'){utagepower = 0;};
     window.setTimeout(expget, 1000)
 }
 function expget(){
@@ -949,9 +1035,9 @@ function nextenemy() {
     enemyprefixe2 = 0;
     enemyname = enemynames[Math.floor(Math.random() * enemynames.length)]; // 敵の名前を決めます
     y = Math.floor(Math.random() * 2); // 1/2
-    if(y == 0){enemyprefixe1 = enemyprefixes[Math.floor(Math.random() * enemyprefixes.length)]}
+    if(y == 0){enemyprefixe1 = enemyprefixes[Math.floor(Math.random() * enemyprefixes.length)]} // 一個目の接頭時
     y = Math.floor(Math.random() * 2); // 1/2
-    if(y == 0){enemyprefixe2 = enemyprefixes[Math.floor(Math.random() * enemyprefixes.length)]}
+    if(y == 0){enemyprefixe2 = enemyprefixes[Math.floor(Math.random() * enemyprefixes.length)]} //　二個目の接頭辞
     if(enemyprefixe1 == enemyprefixe2){enemyprefixe2 = 0}
     if(enemyprefixe1 !== 0 && enemyprefixe2 !== 0){enemyname = enemyprefixe1 + ' ' + enemyprefixe2 + ' ' + enemyname}
     else if (enemyprefixe1 !== 0 && enemyprefixe2 == 0){enemyname = enemyprefixe1 + ' ' + enemyname}
