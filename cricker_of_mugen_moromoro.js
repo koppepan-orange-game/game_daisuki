@@ -7,6 +7,7 @@ let playerdefense = 0;
 let playerexp = 0;
 let playerbuff = 0;
 let playerskillbuff = 0;
+let playerskilldebuff = 0;
 let playerpower = 1;
 let playershell = 1;
 let playermp = 0;
@@ -64,15 +65,27 @@ function bufftekiou(){
     if(playerbuff == 5){document.getElementById('PlayerBuff').textContent = 'luck';}
     if(playerbuff == 6){document.getElementById('PlayerBuff').textContent = 'great luck';}
     if(enemyskilldebuff == 0){document.getElementById('EnemySkillDebuff').textContent = '';}
-    if(enemyskilldebuff == 1){document.getElementById('EnemySkillDebuff').textContent = '';}
+    if(enemyskilldebuff == 1){document.getElementById('EnemySkillDebuff').textContent = 'your destiny';}
     if(playerskillbuff == 0){document.getElementById('PlayerSkillBuff').textContent = '';}
     if(playerskillbuff == 1){document.getElementById('PlayerSkillBuff').textContent = 'suichu gengan';}
-    if(playerskillbuff == 2){document.getElementById('PlayerSkillBuff').textContent = 'null';}
-    if(playerskillbuff == 3){document.getElementById('PlayerSkillBuff').textContent = 'null';}
-    if(playerskillbuff == 4){document.getElementById('PlayerSkillBuff').textContent = 'null';}
+    if(playerskillbuff == 2){document.getElementById('PlayerSkillBuff').textContent = '';}
+    if(playerskillbuff == 3){document.getElementById('PlayerSkillBuff').textContent = '';}
+    if(playerskillbuff == 4){document.getElementById('PlayerSkillBuff').textContent = '';}
     if(playerskillbuff == 5){document.getElementById('PlayerSkillBuff').textContent = 'slacking off';}   
     if(playerskillbuff == 6){document.getElementById('PlayerSkillBuff').textContent = 'Abi Eshuf';} 
+    if(playerskilldebuff == 0){document.getElementById('PlayerSkillDebuff').textContent = '';}
+    if(playerskilldebuff == 1){document.getElementById('PlayerSkillDebuff').textContent = 'summon oz';}
 }
+function enemywithelementtekiou(){
+    if(enemywithelement == 0){document.getElementById('EnemyWithElement').textContent = '';}
+    if(enemywithelement == 1){document.getElementById('EnemyWithElement').textContent = 'fire'; document.getElementById('EnemyWithElement').style.color = '#F15B47';}// styleで文字の色を変えたい
+    if(enemywithelement == 2){document.getElementById('EnemyWithElement').textContent = 'water'; document.getElementById('EnemyWithElement').style.color = '#6495ED';}
+    if(enemywithelement == 3){document.getElementById('EnemyWithElement').textContent = 'thunder'; document.getElementById('EnemyWithElement').style.color = '#954C93';}
+    if(enemywithelement == 4){document.getElementById('EnemyWithElement').textContent = 'ice';   }
+    if(enemywithelement == 5){document.getElementById('EnemyWithElement').textContent = 'grass'; }
+    if(enemywithelement == 6){document.getElementById('EnemyWithElement').textContent = 'wind';  }
+    if(enemywithelement == 7){document.getElementById('EnemyWithElement').textContent = 'rock';  }
+} //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 } // 遅延やってみたかったの
@@ -116,20 +129,20 @@ function begin(){
         // NS 2ターンごとに攻撃力上昇。
         // PS 攻撃が命中すると、少し回復する
         // SS 回復アイテムが使用できない。
-    } else if(playername == 'monarin'){
+    } else if(playername == 'monasan'){
         playernametrick = 1;
         playername = 'mona';
         document.getElementById('PlayerName').textContent = playername;
         document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
         document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #5F4894;padding: 2px 3px;background: #6495ED;cursor: pointer;}';
         document.getElementById('ChangeButton').innerHTML = '<br><br><button class="button" onclick="ChangePlayer()">change</button>';
-        // "monarin"(モナ&春菱)[原神]
-        // EX モナ:次の攻撃3倍。水付着。スタン。
-        //    春菱:敵に毎ターン火を付着させ、ダメージを与える渦を付与。4ターン消滅
+        // "monarin"(モナ&フィッシュル)[原神]
+        // EX モナ:次の攻撃4倍。水付着。スタン。 //ok
+        //    フィ:敵に2倍のダメージを与え、雷付着。攻撃を一回回避する。 //ok
         // NS モナ:3ターンごとに壁を召喚。毎ターン水付着｡(2ターン消滅) //ok
-        //    春菱:3ターンごとに敵に攻撃力の2倍のダメージ。炎付着。
+        //    フィ:4ターンごとにオズを召喚し、毎ターン雷付着｡(2ターン消滅) //ok
         // PS changeを使うとプレイヤーが切り替わる(1ターン1回) //ok
-        // SS 敵が水/炎付着状態の場合、炎/水を当てると1.5倍のダメージ。
+        // SS 敵が水/雷付着状態の場合、雷/水を当てると1.5倍のダメージ。 //ok
     }
     document.getElementById('Thisdisappearsafterthegamestartbegin').innerHTML = ' ';
     document.getElementById('Thisdisappearsafterthegamestartnameinput').innerHTML = ' ';
@@ -233,12 +246,21 @@ async function NSaction(){
     } else if((turncount % 3) == 0 && playername == 'mona' && playerskillbuff !== 1){
         playerskillbuff = 1;
         bufftekiou();
-        turnofcount = 3;
+        monatime = 3;
         x = Math.ceil(playermaxhealth * 0.4);
         document.getElementById('PlayerFriendFront').innerHTML = '<br><br><b><font color="#0067C0">unmeino kyoei</font></b>  <br><span id="MonaKyoeiHealth">0</span>/<span id="MonaKyoeiMaxHealth">0</span>';
         monakyoeimaxhealth = x; monakyoeihealth = x;
         monakyoeitekiou();
+        enemywithelement = 2; //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
+        enemywithelementtekiou();
         document.getElementById('log').textContent = monaNSvoice[Math.floor(Math.random() * monaNSvoice.length)];
+        NStimeout = 1;
+    } else if((turncount % 4) == 0 && playername == 'fischl'){
+        playerskilldebuff = 1;    
+        bufftekiou();
+        oztime = 3;
+        document.getElementById('PlayerFriendBack').innerHTML = '<br><br><b><font color="#7F1184">Oz</font>';
+        document.getElementById('log').textContent = fischlNSvoice[Math.floor(Math.random() * fischlNSvoice.length)];
         NStimeout = 1;
     }
 }
@@ -256,11 +278,25 @@ async function playerturn(){
         playerskillbuff = 0;
         bufftekiou();
         window.setTimeout(enemyorplayer, 1000);
-    } else {
-    if (turnofcount > 0){turnofcount -= 1;};
+    }
+    else {
+    if (turn !== 3){turn = 1;};
+    x = 1;
+    if (playerskillbuff == 1){
+        if(enemywithelement == 3){x = (enemyhealth * 0.5); x = Math.ceil(x); enemyhealth -= x; tekiou(); document.getElementById('log').textContent = '敵は感電し、' + x + 'のダメージを受けた!'; x = 1; if(enemyhealth <= 0){enemyhealth = 0; tekiou(); x = 0; window.setTimeout(killedenemy,1000);};};
+        if(x == 1){enemywithelement = 2;}else if(x == 0){enemywithelement = 0; await delay(1000);} //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
+        monatime -= 1;
+        enemywithelementtekiou(); //モナさんの水中幻願のやつ
+    }
+    if (playerskilldebuff == 1){
+        if(enemywithelement == 2){x = (enemyhealth * 0.5); x = Math.ceil(x); enemyhealth -= x; tekiou(); document.getElementById('log').textContent = '敵は感電し、' + x + 'のダメージを受けた!'; x = 1; if(enemyhealth <= 0){enemyhealth = 0; tekiou(); x = 0; window.setTimeout(killedenemy,1000);};};
+        if(x == 1){enemywithelement = 3;}else if(x == 0){enemywithelement = 0; await delay(1000);} //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
+        oztime -= 1;
+        enemywithelementtekiou(); //フィッシュルのオズのやつ
+    }
+    if(x==1){
     if (NStimeout == 1){await delay(1000); NStimeout = 0;};
     if (skillcooldown == 0){document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';};
-    if (turn !== 3){turn = 1;};
     allowchange = 0;
     phase = 1;
     document.getElementById('log').textContent = 'あなたのターンです！';
@@ -269,6 +305,7 @@ async function playerturn(){
     document.getElementById('select3').textContent = 'tools';
     document.getElementById('back').textContent = 'pass';
     errorcheck();
+    }
     }
 }
 // 選択ボタン
@@ -452,15 +489,17 @@ function disappear(){
 // playerの攻撃たち
 // playerの斬撃攻撃
 async function slash() {
-    x = enemyhealth;
+    x = 0;
     y = enemyhealth;
-    x -= (playerattack * playerpower * alicepower * tokipower + utagepower);
+    x = (playerattack * playerpower * alicepower * tokipower + utagepower);
+    if (enemyskilldebuff == 1){x *= 4;; enemyskilldebuff = 0; enemyskillbufftekiou();};
+    if(playername == 'mona' && enemywithelement == 0){enemywithelement = 2; enemywithelementtekiou();}else if(playername == 'mona' && enemywithelement == 3){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
+    if(playername == 'fischl' && enemywithelement == 0){enemywithelement = 3; enemywithelementtekiou();}else if(playername == 'fischl' && enemywithelement == 2){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
     x = Math.ceil(x);
-    damage = y - x;
-    if(damage < 0){damage = 0};
-    if(damage > y){damage = y};
-    enemyhealth -= damage;
-    document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
+    if(x < 1){x = 0};
+    if(x > enemyhealth){x = enemyhealth};
+    enemyhealth -= x;
+    document.getElementById('log').textContent = enemyname + 'に' + x + 'のダメージ!';
     if (enemyhealth < 0){enemyhealth = 0};
     tekiou();
     if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
@@ -473,19 +512,21 @@ async function doubleslash() {
         if (x == 0){
             damage = 0
         } else {
-            x = enemyhealth;
+            x = 0;
             y = enemyhealth;
-            x -= (playerattack * playerpower * alicepower * tokipower + utagepower);
+            x = (playerattack * playerpower * alicepower * tokipower + utagepower);
+            if (enemyskilldebuff == 1){x *= 4;; enemyskilldebuff = 0; enemyskillbufftekiou();};
+            if(playername == 'mona' && enemywithelement == 0){enemywithelement = 2; enemywithelementtekiou();}else if(playername == 'mona' && enemywithelement == 3){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
+            if(playername == 'fischl' && enemywithelement == 0){enemywithelement = 3; enemywithelementtekiou();}else if(playername == 'fischl' && enemywithelement == 2){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};    
             x = Math.ceil(x);
-            damage = y - x;
-            if(damage < 0){damage = 0};
-            if(damage > y){damage = y};
-            enemyhealth -= damage;
+            if(x < 1){x = 0};
+            if(x > enemyhealth){x = enemyhealth};
+            enemyhealth -= x;
         }
     if (damage == 0){
         document.getElementById('log').textContent = 'miss! ダメージを与えられない!';
     } else {
-    document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
+    document.getElementById('log').textContent = enemyname + 'に' + x + 'のダメージ!';
     if (enemyhealth < 0){enemyhealth = 0}
     tekiou();
     if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
@@ -497,21 +538,23 @@ async function doubleslash() {
         if (x == 0){
             damage = 0
         } else {
-            x = enemyhealth;
+            x = 0;
             y = enemyhealth;
-            x -= (playerattack * playerpower * alicepower * tokipower + utagepower);
+            x = (playerattack * playerpower * alicepower * tokipower + utagepower);
+            if (enemyskilldebuff == 1){x *= 4;; enemyskilldebuff = 0; enemyskillbufftekiou();};
+            if(playername == 'mona' && enemywithelement == 0){enemywithelement = 2; enemywithelementtekiou();}else if(playername == 'mona' && enemywithelement == 3){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
+            if(playername == 'fischl' && enemywithelement == 0){enemywithelement = 3; enemywithelementtekiou();}else if(playername == 'fischl' && enemywithelement == 2){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
             x = Math.ceil(x);
-            damage = y - x;
-            if(damage < 0){damage = 0};
-            if(damage > y){damage = y};
-            enemyhealth -= damage;
+            if(x < 1){x = 0};
+            if(x > enemyhealth){x = enemyhealth};
+            enemyhealth -= x;
         }
         if (damage == 0){
             await delay(1000);
             document.getElementById('log').textContent = 'miss! ダメージを与えられない!';
         } else {
             await delay(1000);
-            document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
+            document.getElementById('log').textContent = enemyname + 'に' + x + 'のダメージ!';
                 if (enemyhealth < 0){enemyhealth = 0}
                 tekiou();
                 if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
@@ -572,19 +615,23 @@ async function slashoflight() {
     }} // アビエシュフだった時の強攻撃ね
     else{
     x = Math.floor(Math.random() * 3); // 1/3です
+    if(playername == 'mona' || playername == 'fischl'){x = 0;};
     if (x == 0) {
-        x = enemyhealth;
+        x = 0;
         y = enemyhealth;
-        x -= (playerattack * 3 * playerpower * alicepower * tokipower + utagepower);
+        x = (playerattack * playerpower * 3 * alicepower * tokipower + utagepower);
+        if (enemyskilldebuff == 1){x *= 4;; enemyskilldebuff = 0; enemyskillbufftekiou();};
+        if(playername == 'mona' && enemywithelement == 0){enemywithelement = 2; enemywithelementtekiou();}else if(playername == 'mona' && enemywithelement == 3){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
+        if(playername == 'fischl' && enemywithelement == 0){enemywithelement = 3; enemywithelementtekiou();}else if(playername == 'fischl' && enemywithelement == 2){x *= 1.5; enemywithelement = 0; enemywithelementtekiou();};
+        if(playername == 'mona' || playername == 'fischl'){x /= 2};
         x = Math.ceil(x);
-        damage = y - x;
-        if(damage < 0){damage = 0};
-        if(damage > y){damage = y};
-        enemyhealth -= damage;
+        if(x < 1){x = 0};
+        if(x > enemyhealth){x = enemyhealth};
+        enemyhealth -= x;
         document.getElementById('log').textContent = enemyname + 'に' + damage + 'のダメージ!';
         if (enemyhealth < 0){enemyhealth = 0}
         tekiou();   
-        if(playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} z *= 2; playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
+        if (playername == 'utage'){if(playerhealth !== playermaxhealth){await delay(1000); z = Math.floor(playermaxhealth * 0.05); if(z < 1){z = 1} z *= 2; playerhealth += z; if(playerhealth > playermaxhealth){playerhealth = playermaxhealth}; document.getElementById('log').textContent = playername + 'は' + z + 'のHPを回復した!'; tekiou();}};
         if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
     } else {document.getElementById('log').textContent = 'miss! ダメージを与えられない!';}
     window.setTimeout(enemyorplayer, 1000)
@@ -783,7 +830,7 @@ function Potion() {
 function Bomb() {
     enemyhealth = 0;
     tekiou();
-    document.getElementById('log').textContent = '私のファイナルエターナルラストアタック!!相手は死ぬ!!!';
+    document.getElementById('log').textContent = 'これで..終わりダッ！'; // 私のファイナルエターナルラストアタック!!相手は死ぬ!!!
     bomb -= 1;
     window.setTimeout(killedenemy, 1000)
 }
@@ -796,15 +843,17 @@ function Skipcard() {
 function ChangePlayer(){
     if(allowchange == 0){
         if(playername == 'mona'){
-            playername = 'shanrin';
+            playername = 'fischl';
             document.getElementById('PlayerName').textContent = playername;
-            document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #FFD700;padding: 2px 3px;background: #F15B47;cursor: pointer;}';
+            document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #7F1184;padding: 2px 3px;background: #B455A0;cursor: pointer;}';
             allowchange = 1;
-        }else if(playername == 'shanrin'){
+            document.getElementById('log').textContent = '交代!';
+        }else if(playername == 'fischl'){
             playername = 'mona';
             document.getElementById('PlayerName').textContent = playername;
             document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #5F4894;padding: 2px 3px;background: #6495ED;cursor: pointer;}';
             allowchange = 1;
+            document.getElementById('log').textContent = '交代!';
         }
     }
 }
@@ -822,10 +871,12 @@ let utageEXvoice = ['いっただきま〜す','ふふーん','どこ斬れば�
 let enemywithelement = 0; //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
 let monakyoeihealth = 0;
 let monakyoeimaxhealth = 0;
+let monatime = 0;
 let monaNSvoice = ['水中幻願！','運命よ、水面に映るのです！','運命の虚栄！'];
 let monaEXvoice = ['運命には逆らえません！','運命よ、ここにいでよ！','これが運命です！','これが運命です！'];
-let shanrinNSvoice = ['グゥオパァー、火を噴け！','グゥオパァー、火を噴け！','アツアツでしょ','料理の時間だよ！'];
-let shanrinEXvoice = ['アハ...ハァ！','話が通じないなら、叩くまででしょ〜','師匠の技を食らいなさい！'];
+let oztime = 0;
+let fischlNSvoice = ['断罪の名において！','断罪の名において！','姿を見せよ！オズ！','応えなさい！','オズ:またか...','オズ:またか...'];
+let fischlEXvoice = ['黒き翼よ、昼夜を切り裂きなさいーー','夜の幻現','影の鴉が、幽夜を求めているーー','オズ:お嬢様の仰せのままに！','オズ:夜の幻現！'];
 // skillの手続き
 async function skillact() {
     if (skillcooldown == 0){
@@ -880,8 +931,32 @@ async function skillact() {
         document.getElementById('log').textContent = '体力が' + x + '回復した！';
         skillcooldown = 'utagenull';
         window.setTimeout(enemyorplayer, 1000);
+    } else if(playername == 'mona'){
+        document.getElementById('Skillbutton').innerHTML = '';
+        document.getElementById('log').textContent = monaEXvoice[Math.floor(Math.random() * monaEXvoice.length)];
+        await delay(500);
+        enemyskilldebuff = 1;
+        bufftekiou();
+        enemywithelement = 2;
+        skillcooldown = 5;
+        window.setTimeout(enemyorplayer, 1500);
+    } else if(playername == 'fischl'){
+        document.getElementById('Skillbutton').innerHTML = '';
+        disappear();
+        document.getElementById('log').textContent = fischlEXvoice[Math.floor(Math.random() * fischlEXvoice.length)];
+        await delay(500);
+        x = enemyhealth; y = enemyhealth;
+        z = (playerattack * playerpower * 2);
+        x -= z; x = Math.ceil(x);
+        damage = y - x;
+        if(damage < 0){damage = 0}; if(damage > y){damage = y};
+        enemyhealth -= damage; tekiou();
+        enemywithelement = 3; //1=炎 2=水 3=雷 4=氷 5=草 6=風 7=岩
+        enemywithelementtekiou();
+        turn = 3;
+        window.setTimeout(playerturn, 1000);
     }
-    }else {document.getElementById('log').textContent = 'skill is not ready...';}
+    } else {document.getElementById('log').textContent = 'skill is not ready...';}
 }
 function alicetekiou(){
     document.getElementById('AliceEnelgy').textContent = aliceenelgy;
@@ -894,12 +969,17 @@ function monakyoeitekiou(){
     document.getElementById('MonaKyoeiMaxHealth').textContent = monakyoeimaxhealth;
     document.getElementById('MonaKyoeiHealth').textContent = monakyoeihealth;
     if(monakyoeihealth <= 0){monakyoeihealth = 0; monakyoeibreak();};
-    if(turnofcount == 0){monakyoeibreak();}
+    if(monatime == 0){monakyoeibreak();}
 }
 function monakyoeibreak(){
     document.getElementById('PlayerFriendFront').innerHTML = '';
     playerskillbuff = 0;
     bufftekiou();
+}
+function ozbreak(){
+        document.getElementById('PlayerFriendBack').innerHTML = '';
+        playerskilldebuff = 0;
+        bufftekiou();
 }
 // enemieturnまでの道のり
 function enemyorplayer(){
@@ -928,6 +1008,7 @@ async function enemieturn() {
 }
 async function enemyattack() {
     w = 1;
+    if (enemyskilldebuff == 1){w = 1;} //モナさんのEXスタン
     x = playerhealth;
     y = playerhealth;
     x -= enemylevel;
@@ -959,23 +1040,21 @@ async function enemyattack() {
         if (enemyhealth < 0){enemyhealth = 0}
         y = x - enemyhealth;
     }
-    if (enemydebuff !== 0){
-        await delay(1000); // 2秒間の遅延
+    if (enemydebuff == 1 || enemydebuff == 2){
+        await delay(1000);
         document.getElementById('log').textContent = enemyname + 'は毒で' + y + 'のダメージ!';
     }
     tekiou();
-    if (enemyhealth < 0){
-        enemyhealth = 0
-    }
-    if (enemyhealth == 0){
-        window.setTimeout(killedenemy, 1000)
-    } else {
+    if (enemyhealth < 0){enemyhealth = 0}
+    if (enemyhealth == 0){window.setTimeout(killedenemy, 1000)}
+    else {
         await delay(1000);
         playerturn()
         turncountincrease()
         SkillCooldownDecrease()
         NSaction()
         if(playerskillbuff == 1){monakyoeitekiou();}
+        else if(oztime == 0 && playerskilldebuff == 1){ozbreak();}
     }
 }
 }
@@ -1022,6 +1101,10 @@ function nextenemy() {
     playerskillbuff = 0;
     if (x == 1){playerskillbuff = 1}
     if (x == 6){playerskillbuff = 6}
+    x = 0;
+    if(playerskilldebuff = 1){x = 1}
+    playerskilldebuff = 0;
+    if (x == 1){playerskilldebuff = 1}
     enemydebuff = 0;
     enemyskilldebuff = 0;
     bufftekiou()
