@@ -52,7 +52,6 @@ let enemyprefixe2 = 0;
 let enemyprefixes1 = ['コッペパン好きな','猫耳の','メイド服を着た','かっこいい','ボカロ好きの','頭のおかしくなった','マカロンが好きな','ダークモカチップクリームフラペチーノを持った','猫になった'
                      ,'ドンファイのマスターフルコンを目指す','どっちかっていうと猫派な','犬が嫌いな','借り暮らしの','その日暮らしの','手に何か持ってないと落ち着かない','元','課題に追われる','白水色が好きな','承認欲求高めの'
                      ,'「ぼっち・ざ・ろっく」が好きな', '「よふかしのうた」が好きな','「らき☆すた」が好きな','Minecraftが好きな','弾幕ゲームが好きな','ブルーアーカイブが好きな','第五人格が好きな','プロセカが好きな','#コンパスが好きな'
-                     ,'「ダーリンダンス」が好きな','「病み垢ステロイド」が好きな','「私は雨」が好きな','「ひみつの小学生」が好きな','「ひみつのユーフォー」が好きな','「メズマライザー」が好きな','「堕天」が好きな','「リアルにぶっとばす」が好きな','「魔法少女とちょこれゐと」が好きな','「パキパキ天使のハードラック」が好きな','「マーシャル・マキシマイザー」が好きな','「撫でんな」が好きな','「おくすり飲んで寝よう」が好きな','「ライアーダンサー」が好きな','「青春コンプレックス」が好きな','「ハルカミライ」が好きな','「青春のアーカイブ」が好きな'
                      ,];
 let enemyprefixes2 = ['Discord信者','勇者','魔王','ゾンビ','先生','ドクター','マスター','西の高校生探偵','東の高校生探偵'
                      ,'ツインテ狩り','モス通い','ルフレ使い','真のヒロイン','バカ','天才','戦犯','這い寄る脅威'
@@ -156,19 +155,18 @@ function begin(){
         document.getElementById('Skillbutton').innerHTML = '<button class="button" onclick="skillact()">skill</button>';
         document.getElementById('ButtonStyle').textContent = '.button{border: 2px solid #ff7373;padding: 2px 3px;background: #fcffc0;cursor: pointer;}';
         // "shaosan"
-        // EX 
-        // NS 
+        // EX 攻撃力を上げるが、相手のレベル(攻撃力)も上がる。
+        // NS 5の倍数のターンの時、攻撃力を上げる。
         // PS ダメージを受けた時、攻撃力が上がる。
+        // SS 5ターン経過時、攻撃力(増加したやつ)を0にする。
     }
     document.getElementById('Thisdisappearsafterthegamestartbegin').innerHTML = ' ';
     document.getElementById('Thisdisappearsafterthegamestartnameinput').innerHTML = ' ';
     document.getElementById('BackButtonDesu').innerHTML = '<button align="center" class="button" onclick="GoToCity()">Back</button>';
     reset()
 }
-
-// ほんとに関係ないけどダンスダンスレボリューションの話出たのデビル・ダンス・レボリューションの影響やろ
-
 function reset() {
+    money = 0;
     turn = 0;
     turncount = 0;
     bossbattlenow = 0;
@@ -197,13 +195,14 @@ function reset() {
     zombieresurrections = 1; //ゾンビの復活回数です。
     bomertension = 0; // ボマーのテンションです。
     zomupower = 1; //ゾムの攻撃強化です。
+    shaopower = 0; //シャオさんの攻撃強化です。
     tekiou()
     document.getElementById('log').textContent = 'ゲーム開始です！！';
     window.setTimeout(start,1000);
     if(playerskillbuff == 1){greenslimecopybreak();};
     if(playername == 'mechanic'){mechanicturretbreak();};
 }
-function restart(){enemylevel -= 1;enemymaxhealth-=1;SkillCooldownDecrease();zombieresurrections = 1;bomertension = 0;zomupower = 1;tekiou();document.getElementById('log').textContent = 'バトル再開です！';if(playerskillbuff == 1){greenslimecopybreak();};if(playername == 'mechanic'){mechanicturretbreak();};window.setTimeout(nextenemy,1000);}
+function restart(){document.getElementById('PlayerName').textContent = playername;SkillCooldownDecrease();zombieresurrections = 1;bomertension = 0;zomupower = 1;tekiou();document.getElementById('log').textContent = 'バトル再開です！';if(playerskillbuff == 1){greenslimecopybreak();};if(playername == 'mechanic'){mechanicturretbreak();};window.setTimeout(nextenemy,500);}
 function start(){
     playerhealth = 10;
     playermaxhealth = 10;
@@ -231,7 +230,7 @@ function start(){
     playerturn();
 }
 let lowedplayerattack = 0; let lowedplayerdefense = 0; let lowedplayermaxmp = 0; let lowedplayermaxhealth = 0; let lowedplayerlevel = 0;
-function GoToBattle(){document.getElementById('BattleScene').innerHTML = '<span>turn:</span><span id="TurnCount">0</span><br><b id="EnemyName">enemy</b>   <i>Lv.</i><i id="EnemyLevel">1</i>   <u id="EnemyDebuff"></u>   <u id="EnemySkillDebuff"></u><br><span id="EnemyHealth">0</span>/<span id="EnemyMaxHealth">0</span><span id="PlayerFriendFront"></span><br><br><b id="PlayerName">player</b>   <i>Lv.</i><i id="PlayerLevel">1</i>   <u id="PlayerBuff"></u>   <u id="PlayerSkillBuff"></u><span id="AdditionalPlayerPoint"></span><br><span id="PlayerHealth">0</span>/<span id="PlayerMaxHealth">0</span><span id="PlayerFriendBack"></span><br><br><br><button class="button" id="select1" onclick="select1()">attack</button>  <button class="button" id="select2" onclick="select2()">magic</button>  <button class="button" id="select3" onclick="select3()">tools</button>  <button class="button" id="back" onclick="back()">pass</button>  <br><span id="Skillbutton"> </span><br><br><span align="center" id="log">pless "reset" to game start</span><br><span id="StatusAppearDisappear"><button class="button" id="StatusButton" onclick="StatusAppear()">status</button></span><br><span id="Status"> </span><br><br><br><br><span id="BackButtonDesu"><button align="center" class="button" onclick="GoToCity()">Back</button></span>'; document.getElementById('EnemyLevel').textContent = enemylevel;document.getElementById('PlayerLevel').textContent = playerlevel;document.getElementById('PlayerMaxHealth').textContent = playermaxhealth;document.getElementById('EnemyMaxHealth').textContent = enemymaxhealth;tekiou(); bufftekiou(); restart();}
+function GoToBattle(){document.getElementById('BattleScene').innerHTML = '<span>turn:</span><span id="TurnCount">0</span><br><b id="EnemyName">enemy</b>   <i>Lv.</i><i id="EnemyLevel">1</i>   <u id="EnemyDebuff"></u>   <u id="EnemySkillDebuff"></u><br><span id="EnemyHealth">0</span>/<span id="EnemyMaxHealth">0</span><span id="PlayerFriendFront"></span><br><br><b id="PlayerName">player</b>   <i>Lv.</i><i id="PlayerLevel">1</i>   <u id="PlayerBuff"></u>   <u id="PlayerSkillBuff"></u><span id="AdditionalPlayerPoint"></span><br><span id="PlayerHealth">0</span>/<span id="PlayerMaxHealth">0</span><span id="PlayerFriendBack"></span><br><br><br><button class="button" id="select1" onclick="select1()">attack</button>  <button class="button" id="select2" onclick="select2()">magic</button>  <button class="button" id="select3" onclick="select3()">tools</button>  <button class="button" id="back" onclick="back()">pass</button>  <br><span id="Skillbutton"> </span><br><br><span align="center" id="log">pless "reset" to game start</span><br><span id="StatusAppearDisappear"><button class="button" id="StatusButton" onclick="StatusAppear()">status</button></span><br><span id="Status"> </span><br><br><br><br><span id="BackButtonDesu"><button align="center" class="button" onclick="GoToCity()">Back</button></span>'; document.getElementById('EnemyLevel').textContent = enemylevel;document.getElementById('PlayerLevel').textContent = playerlevel;document.getElementById('PlayerMaxHealth').textContent = playermaxhealth;document.getElementById('EnemyMaxHealth').textContent = enemymaxhealth;tekiou(); bufftekiou(); disappear(); restart();}
 function turncountincrease(){turncount += 1; document.getElementById('TurnCount').textContent = turncount;}
 function SkillCooldownDecrease(){
     if(playernametrick == 1){
@@ -292,6 +291,10 @@ async function NSaction(){
         if(enemyhealth <= 0){enemyhealth = 0; tekiou();};
         if (enemyhealth == 0){window.setTimeout(killedenemy,1000);}
         else {window.setTimeout(enemieturn,1000);}
+    } else if((turncount % 5) == 0 && playername == 'shaosan'){
+        shaopower += 1;
+        document.getElementById('log').textContent = shaoNSvoice[Math.floor(Math.random() * shaoNSvoice.length)];
+        NStimeout = 1;
     }
 }
 async function playerturn() {
@@ -305,6 +308,7 @@ async function playerturn() {
     if (NStimeout == 1){await delay(1000); NStimeout = 0;};
     if(playername == 'mechanic'){mechanicturretattack = Math.round(playerattack * 0.5);};
     if(playername == 'touzoku'){touzokufourthslash = Math.floor(Math.random() * 4);}; //1/4でdoubleslashがfourthslashになります 
+    if(playername == 'shaosan' && turncount == 6){shaopower = 0; document.getElementById('log').textContent = '疲れた!!';};
     if (turn !== 3){turn = 1;};
     phase = 1;
     document.getElementById('log').textContent = 'あなたのターンです！';
@@ -312,6 +316,7 @@ async function playerturn() {
     document.getElementById('select2').textContent = 'magic';
     document.getElementById('select3').textContent = 'tools';
     document.getElementById('back').textContent = 'pass';
+    document.getElementById('BackButtonDesu').innerHTML = '<button align="center" class="button" onclick="GoToCity()">Back</button>';
     errorcheck();
     } else if(w == 1){window.setTimeout(enemyorplayer, 1000)}
 };
@@ -495,6 +500,7 @@ function disappear(){
     document.getElementById('select2').textContent = ' ';
     document.getElementById('select3').textContent = ' ';
     document.getElementById('back').textContent = '';
+    document.getElementById('BackButtonDesu').innerHTML = '';
     phase = 'null';
 }
 // playerの攻撃たち
@@ -502,7 +508,7 @@ function disappear(){
 async function slash() {
     x = enemyhealth;
     y = enemyhealth;
-    x -= (playerattack * playerpower * zomupower * shaopower);
+    x -= (playerattack * playerpower + weaponpower * zomupower + shaopower);
     x = Math.ceil(x);
     damage = y - x;
     if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();};
@@ -558,7 +564,7 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower * zomupower * shaopower);
+            x -= (playerattack * playerpower + weaponpower * zomupower + shaopower);
             x = Math.ceil(x);
             damage = y - x;
             if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();}
@@ -585,7 +591,7 @@ async function doubleslash() {
         } else {
             x = enemyhealth;
             y = enemyhealth;
-            x -= (playerattack * playerpower * zomupower * shaopower);
+            x -= (playerattack * playerpower + weaponpower * zomupower + shaopower);
             x = Math.ceil(x);
             damage = y - x;
             if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();}
@@ -623,7 +629,7 @@ async function slashoflight() {
     if(x == 0){
         x = enemyhealth;
         y = enemyhealth;
-        z = (playerattack * playerpower * 5 * zomupower * shaopower);
+        z = (playerattack * playerpower + weaponpower * 5 * zomupower + shaopower);
         x -= z
         x = Math.ceil(x);
         damage = y - x;
@@ -657,7 +663,7 @@ async function slashoflight() {
     if (x == 0) {
         x = enemyhealth;
         y = enemyhealth;
-        x -= (playerattack * 3 * playerpower);
+        x -= (playerattack * 3 * playerpower * zomupower + shaopower);
         x = Math.ceil(x);
         damage = y - x;
         if(playerskillbuff == 2){damage = damage * 2; playerskillbuff = 0; bufftekiou();}
@@ -884,9 +890,11 @@ let zomuEXvoice = ['死にたくなったら言ってください。助けるん
 let zomuNSvoice = ['ぶしゅしゅしゅしゅ！！','お前の考えなんて読めるんだよ','かまってぇや、マジで','雑魚がよぉ','クソ王子、あなたの目はクソですか','正義は為された'];
 let shaopower = 1;
 let shaoEXvoice = ['甘いぜオイ、雑魚乙','雑魚乙','お前ぶっ殺すぞ！？','夢見んなよクソ視聴者'];
-let shaoNSvoice = ['俺が人狼だよ、かかってこいよテメェら！','パーティの始まりだぜ！！','煽りキャラ返せこの野郎！！','夢の橋を渡ってください',''];
+let shaoNSvoice = ['俺が人狼だよ、かかってこいよテメェら！','パーティの始まりだぜ！！','煽りキャラ返せこの野郎！！','夢の橋を渡ってください'];
+let shaoPSvoice = ['目が合うエビ','ルエビル','落ちた仲間やろ来いや','もうこれでもなんでしょうもないや','フェアにはならんのや','お前待て待てお前なんで','感じなっそうなんですけどおい']
 // skillの手続き
 async function skillact() {
+    if(phase == 1){
     if (skillcooldown == 0){
         if(playername == 'greenslime'){
         if(playerhealth > Math.floor(playermaxhealth * 0.5)){
@@ -961,9 +969,20 @@ async function skillact() {
         document.getElementById('log').textContent = enemyname + 'に' + x + 'のダメージを与えた!';
         tekiou()
         zomupower = 2;
-        window.setTimeout(enemyorplayer, 1000)
+        window.setTimeout(enemyorplayer, 1000) 
+    } else if(playername == 'shaosan'){
+        document.getElementById('log').textContent = 'ここに煽りセリフを入力してください';
+        document.getElementById('Skillbutton').innerHTML = '';
+        skillcooldown = 3;
+        await delay(1000);
+        shaopower += 2;
+        enemylevel += 2;
+        document.getElementById('EnemyLevel').textContent = enemylevel;
+        await delay(1000);
+        window.setTimeout(playerturn, 1000)
     }
     }else {document.getElementById('log').textContent = 'skill is not ready...';}
+}
 }
 function greenslimecopytekiou(){
     document.getElementById('GreenSlimeCopyHealth').textContent = greenslimecopyhealth;
@@ -1023,7 +1042,7 @@ function clownbombexplosion(){
     tekiou();
     document.getElementById('log').textContent = '敵に' + y + 'のダメージを与えた!';
     if (enemyhealth == 0){window.setTimeout(killedenemy,1000);;}
-    else {phase = 1; window.setTimeout(playerturn, 1000)};
+    else {phase = 1; window.setTimeout(enemyorplayer, 1000)};
 }
 function zombiefriendtekiou(){
     document.getElementById('ZombieFriendHealth').textContent = zombiefriendhealth;
@@ -1084,7 +1103,7 @@ async function Enemyattack() {
     x = playerhealth;
     y = playerhealth;
     x -= enemylevel;
-    x += playerdefense * playershell;
+    x += (playerdefense * playershell + armorshell);
     damage = playerhealth - x;
     if (damage < 0){damage = 0;};
     if (enemyskilldebuff == 1){damage = 0;};
@@ -1098,7 +1117,7 @@ async function Enemyattack() {
     else {
         if(playername == 'bomer' && bomertension > 0){bomertension -= 1; bomertekiou()}; // bomerのtensionを下げる動き
         document.getElementById('log').textContent = playername + 'に' + z + 'のダメージ!';
-        if(playername == 'shaosan'){tekiou(); await delay(1000); shaopower += 0.2; shaopower = Math.floor(shaopower * 10) / 10; document.getElementById('log').textContent = '何やっとんねん チンピラどもーーーーッ';};// shaosanのpowerを上げる動き
+        if(playername == 'shaosan'){tekiou(); await delay(1000); shaopower += 1; shaopower = Math.floor(shaopower * 10) / 10; document.getElementById('log').textContent = shaoPSvoice[Math.floor(Math.random() * shaoPSvoice.length)];};// shaosanのpowerを上げる動き
     };
     if (playerhealth < 0){playerhealth = 0};
     if (playerhealth == 0){defeat();turn = 0;}
@@ -1143,7 +1162,7 @@ async function killedenemy() {
     document.getElementById('log').textContent = enemyname + 'を倒した!';
     if(playername == 'bomer'){z = 0; z += 2; if(playerskillbuff == 5){z += 1; playerskillbuff = 0; bufftekiou();}; if(bomerbombused == 1){z += 3; bomerbombused = 0;}; await delay(1000); bomertension += z; document.getElementById('log').textContent =  'bomerはテンションが' + z + '上がった!'; bomertekiou();};
     if(playername == 'zomusan'){zomupower = 1;};
-    if(playername == 'shaosan'){shaopower = 1;};
+    //if(playername == 'shaosan'){shaopower = 0;};
     await delay(1000);
     z = Math.floor(Math.random() * 11) + 1;
     money += z;
@@ -1188,7 +1207,7 @@ function nextenemy() {
     if (playernametrick = 1){enemylevel += (Math.floor(Math.random() * 2));} // 0 ~ +1} // 名前付きのつよつよplayerのためのセプテット(?)(level)
     if (enemylevel < 1){enemylevel = 1}
     enemymaxhealth += 1;
-    if (playernametrick = 1){enemylevel += (Math.floor(Math.random() * 2));} // 0 ~ +1} // 名前付きのつよつよplayerのためのセプテット(?)(health)
+    if (playernametrick = 1){enemymaxhealth += (Math.floor(Math.random() * 2)); enemymaxhealth += (Math.floor(Math.random() * 2));} // 0 ~ +2} // 名前付きのつよつよplayerのためのセプテット(?)(health)
     enemyhealth = enemymaxhealth;
     enemyname = 0;
     enemyprefixe1 = 0;
@@ -1247,9 +1266,16 @@ let nowshop = 0;
 let haveweapons = [];
 let havearmors = [];
 let havetools = [];
+let equipweapon = 0;
+let equiparmor = 0;
+let equiptool1 = 0;
+let equiptool2 = 0;
+let equiptool3 = 0;
+let weaponpower = 0;
+let armorshell = 0;
 function GoToShop(){
     nowshop = 0;
-    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><button class="button" id="ShopBuyWeapons" onclick="ShopBuyWeapons()">Buy Weapons</button><br><br><button class="button" id="ShopBuyArmors" onclick="ShopBuyArmors()">Buy Armors</button><br><br><button class="button" id="ShopBuyTools" onclick="ShopBuyTools()">Buy Tools</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><button class="button" id="ShopBuyWeapons" onclick="ShopBuyWeapons()">Buy Weapons</button><br><br><button class="button" id="ShopBuyArmors" onclick="ShopBuyArmors()">Buy Armors</button><br><br><button class="button" id="ShopBuyTools" onclick="ShopBuyTools()">Buy Tools</button><br><br><button class="button" id="ShopEquip" onclick="GoToEquip()">Equip Center</button></span><br><br><br><br><button class="button" id="BackToCity" onclick="GoToCity()">Back To City</button>';
 }
 function ShopBuyWeapons(){
     nowshop = 1;
@@ -1271,12 +1297,18 @@ function ShopBuyButton(){
     switch(shopinputtext){
       case '01':
         if(nowshop == 1){
+        if(haveweapons.includes("木の棒")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 20){money -= 20; haveweapons.push('木の棒');document.getElementById('SHOPlog').textContent = '木の棒を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("マスク")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 10){money -= 10; havearmors.push('マスク');document.getElementById('SHOPlog').textContent = 'マスクを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 3){
         if(money >= 30){money -= 30; havetools.push('アスピリン');document.getElementById('SHOPlog').textContent = 'アスピリンを購入しました!';}
@@ -1285,12 +1317,18 @@ function ShopBuyButton(){
         }
       case '02':
         if(nowshop == 1){
+        if(haveweapons.includes("木刀")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 50){money -= 50; haveweapons.push('木刀');document.getElementById('SHOPlog').textContent = '木刀を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("薄めの本")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 20){money -= 20; havearmors.push('薄めの本');document.getElementById('SHOPlog').textContent = '薄い本を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 3){
         if(money >= 50){money -= 50; havetools.push('パブロン');document.getElementById('SHOPlog').textContent = 'パブロンを購入しました!';}
@@ -1299,12 +1337,18 @@ function ShopBuyButton(){
         }
       case '03':
         if(nowshop == 1){
+        if(haveweapons.includes("竹刀")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 100){money -= 100; haveweapons.push('竹刀');document.getElementById('SHOPlog').textContent = '竹刀を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("木の板")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 50){money -= 50; havearmors.push('木の板');document.getElementById('SHOPlog').textContent = '木の板を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 3){
         if(money >= 100){money -= 100; havetools.push('トリプシン');document.getElementById('SHOPlog').textContent = 'トリプシンを購入しました!';}
@@ -1313,12 +1357,18 @@ function ShopBuyButton(){
         }
       case '04':
         if(nowshop == 1){
+        if(haveweapons.includes("石ころ")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 200){money -= 200; haveweapons.push('石ころ');document.getElementById('SHOPlog').textContent = '石ころを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("テッパン")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 100){money -= 100; havearmors.push('テッパン');document.getElementById('SHOPlog').textContent = 'テッパンを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 3){
         if(money >= 500){money -= 500; havetools.push('ルル');document.getElementById('SHOPlog').textContent = 'ルルを購入しました!';}
@@ -1327,50 +1377,77 @@ function ShopBuyButton(){
         }
       case '05':
         if(nowshop == 1){
+        if(haveweapons.includes("大きな石")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 300){money -= 300; haveweapons.push('大きな石');document.getElementById('SHOPlog').textContent = '大きな石を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("鍋の蓋")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 300){money -= 300; havearmors.push('鍋の蓋');document.getElementById('SHOPlog').textContent = '鍋の蓋を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         }
       case '06':
         if(nowshop == 1){
+        if(haveweapons.includes("レンガ")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 500){money -= 500; haveweapons.push('レンガ');document.getElementById('SHOPlog').textContent = 'レンガを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("厚めの本")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 500){money -= 500; havearmors.push('厚めの本');document.getElementById('SHOPlog').textContent = '厚めの本を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         }
       case '07':
         if(nowshop == 1){
+        if(haveweapons.includes("薄めの紙")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 20){money -= 20; haveweapons.push('薄めの紙');document.getElementById('SHOPlog').textContent = '薄めの紙を購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         } else if(nowshop == 2){
+        if(havearmors.includes("ドア")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 1000){money -= 1000; havearmors.push('ドア');document.getElementById('SHOPlog').textContent = 'ドアを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         }
       case '08':
         if(nowshop == 1){
+        if(haveweapons.includes("カード")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 77){money -= 77; haveweapons.push('カード');document.getElementById('SHOPlog').textContent = 'カードを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
       }
       case '09':
         if(nowshop == 1){
+        if(haveweapons.includes("ハサミ")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 600){money -= 600; haveweapons.push('はさみ');document.getElementById('SHOPlog').textContent = 'はさみを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         }
       case '10':
         if(nowshop == 1){
+        if(haveweapons.includes("ナイフ")){document.getElementById('SHOPlog').textContent = 'you already have a it!';}
+        else{
         if(money >= 1000){money -= 1000; haveweapons.push('ナイフ');document.getElementById('SHOPlog').textContent = 'ナイフを購入しました!';}
         else{document.getElementById('SHOPlog').textContent = 'not enough money..';};
+        }
         break;
         }
       case '11':
@@ -1407,6 +1484,218 @@ function ShopBuyButton(){
   function SHOPmoneytekiou(){
     document.getElementById('SHOPMONEY').textContent = money + '€';
   }
+let appearweapons = '';
+let appeararmors = '';
+let appeartools = '';
+function GoToEquip(){
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p><button class="button"onclick="GoToEquipWeapon()">Equip Weapon</button><br><br><button class="button"onclick="GoToEquipArmor()">Equip Armor</button><br><br><button class="button"onclick="GoToEquipTool()">Equip Tool</button></p><br><br><br><br><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span>'
+}
+function GoToEquipWeapon(){
+    nowshop = 4;
+    document.getElementById('BattleScene').innerHTML = '<span id="InShopScene"><p><span id="AppearShops"></span><br><br><input type="text" id="ShopInputText" minlength="2" maxlength="2" size="16" placeholder="write number here"><button class="button" onclick="ShopEquipButton()">Equip</button></p><br><br><span id="SHOPlog"></span><br><br><br><button class="button" id="BakcToShop" onclick="GoToShop()">Back To Shop</button></span>';
+    appearweapons = '';
+    x = 0;
+    if(haveweapons.includes("木の棒")){x += 1;}
+    if(haveweapons.includes("木刀")){x += 10;}
+    if(haveweapons.includes("竹刀")){x += 100;}
+    if(haveweapons.includes("石ころ")){x += 1000;}
+    if(haveweapons.includes("大きな石")){x += 10000;}
+    if(haveweapons.includes("レンガ")){x += 100000;}
+    if(haveweapons.includes("薄めの紙")){x += 1000000;}
+    if(haveweapons.includes("カード")){x += 10000000;}
+    if(haveweapons.includes("はさみ")){x += 100000000;}
+    if(haveweapons.includes("ナイフ")){x += 1000000000;}
+    if(x >= 1000000000){x -= 1000000000; appearweapons = '10 ナイフ';}
+    if(x >= 100000000){x -= 100000000; appearweapons = '09 はさみ'+ '<br>' + appearweapons;}
+    if(x >= 10000000){x -= 10000000; appearweapons = '08 カード'+ '<br>' + appearweapons;}
+    if(x >= 1000000){x -= 1000000; appearweapons = '07 薄めの紙'+ '<br>' + appearweapons;}
+    if(x >= 100000){x -= 100000; appearweapons = '06 レンガ' + '<br>' + appearweapons;}
+    if(x >= 10000){x -= 10000; appearweapons = '05 大きな石' + '<br>' + appearweapons;}
+    if(x >= 1000){x -= 1000; appearweapons = '04 石ころ' + '<br>' + appearweapons;}
+    if(x >= 100){x -= 100; appearweapons = '03 竹刀' + '<br>' + appearweapons;}
+    if(x >= 10){x -= 10; appearweapons = '02 木刀' + '<br>' + appearweapons;}
+    if(x >= 1){x -= 1; appearweapons = '01 木の棒' + '<br>' + appearweapons;}
+    document.getElementById('AppearShops').innerHTML = appearweapons;
+  }
+  function GoToEquipArmor(){
+    nowshop = 5;
+    appeararmors = '';
+    x = 0;
+    if(havearmors.includes("マスク")){x += 1;}
+    if(havearmors.includes("薄めの本")){x += 10;}
+    if(havearmors.includes("木の板")){x += 100;}
+    if(havearmors.includes("テッパン")){x += 1000;}
+    if(havearmors.includes("鍋の蓋")){x += 10000;}
+    if(havearmors.includes("厚めの本")){x += 100000;}
+    if(havearmors.includes("ドア")){x += 1000000;}
+    if(x >= 1000000){x -= 1000000; appeararmors = '07 ドア'+ '<br>' + appeararmors;}
+    if(x >= 100000){x -= 100000; appeararmors = '06 厚めの本'+ '<br>' + appeararmors;}
+    if(x >= 10000){x -= 10000; appeararmors = '05 鍋の蓋'+ '<br>' + appeararmors;}
+    if(x >= 1000){x -= 1000; appeararmors = '04 テッパン'+ '<br>' + appeararmors;}
+    if(x >= 100){x -= 100; appeararmors = '03 木の板'+ '<br>' + appeararmors;}
+    if(x >= 10){x -= 10; appeararmors = '02 薄めの本'+ '<br>' + appeararmors;}
+    if(x >= 1){x -= 1; appeararmors = '01 マスク'+ '<br>' + appeararmors;}
+    document.getElementById('AppearShops').innerHTML = appeararmors;
+  }
+  function GoToEquipTool(){
+    nowshop = 6;
+    document.getElementById('BattleScene').innerHTML = '<span>えーっと...開発期間が短かったです！テスト期間と重なってたし<br>なのでもうちょい待ってね〜<br>magicの動きを応用すればすぐにできるから<br>あ、メモwebのネタ帳に"もはやただのあれ"を追加したから、暇だったらみてね<br>配信者さんはguraさんしかみないのです</span><br><br><button onclick="GoToCity()">Back</button><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><a href="https://scratch.mit.edu/projects/1000452587/">wait....what?!</a>'; //この文たちは消しといてね
+  }
+function ShopEquipButton(){
+  shopinputtext = document.getElementById('ShopInputText').value;
+  switch(shopinputtext){
+    case '01':
+      if(nowshop == 4){
+      if(haveweapons.includes("木の棒")){
+        document.getElementById('SHOPlog').textContent = 'あなたは木の棒を装備しました！';
+        equipweapon = 1;
+        weaponpower = 1;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      } else if(nowshop == 5){
+      if(havearmors.includes("マスク")){
+        document.getElementById('SHOPlog').textContent = 'あなたはマスクを装備しました！';
+        equiparmor = 1;
+        armorshell = 0;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      };
+    case '02':
+      if(nowshop == 4){
+      if(haveweapons.includes("木刀")){
+        document.getElementById('SHOPlog').textContent = 'あなたは木刀を装備しました！';
+        equipweapon = 2;
+        weaponpower = 2;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      } else if(nowshop == 5){
+      if(havearmors.includes("薄めの本")){
+        document.getElementById('SHOPlog').textContent = 'あなたは薄い本を装備しました！';
+        equiparmor = 2;
+        armorshell = 0;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      };
+    case '03':
+      if(nowshop == 4){
+        if(haveweapons.includes("竹刀")){
+          document.getElementById('SHOPlog').textContent = 'あなたは竹刀を装備しました！';
+          equipweapon = 3;
+        weaponpower = 3;
+        }
+        }
+      else if(nowshop == 5){
+      if(havearmors.includes("木の板")){
+        document.getElementById('SHOPlog').textContent = 'あなたは木の板を装備しました！';
+        equiparmor = 3;
+        armorshell = 1;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      };
+    case '04':
+      if(nowshop == 4){
+        if(haveweapons.includes("石ころ")){
+          document.getElementById('SHOPlog').textContent = 'あなたは石ころを装備しました！';
+          equipweapon = 4;
+          weaponpower = 4;
+        } 
+        } 
+      else if(nowshop == 5){
+      if(havearmors.includes("テッパン")){
+        document.getElementById('SHOPlog').textContent = 'あなたはテッパンを装備しました！';
+        equiparmor = 4;
+        armorshell = 2;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      };
+    case '05':
+      if(nowshop == 4){
+        if(haveweapons.includes("大きな石")){
+          document.getElementById('SHOPlog').textContent = 'あなたは大きな石を装備しました！';
+          equipweapon = 5;
+          weaponpower = 5;
+        }
+        }
+      else if(nowshop == 5){
+      if(havearmors.includes("鍋の蓋")){
+        document.getElementById('SHOPlog').textContent = 'あなたは鍋の蓋を装備しました！';
+        equiparmor = 5;
+        armorshell = 3;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      };
+    case '06':
+      if(nowshop == 4){
+        if(haveweapons.includes("レンガ")){
+          document.getElementById('SHOPlog').textContent = 'あなたはレンガを装備しました！';
+          equipweapon = 6;
+          weaponpower = 6;
+        }
+
+        }
+    else if(nowshop == 5){
+      if(haveweapons.includes("厚めの本")){
+        document.getElementById('SHOPlog').textContent = 'あなたは厚めの本を装備しました！';
+        equiparmor = 6;
+        armorshell = 4;
+      }
+      else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+      break;
+      };
+    case '07':
+      if(nowshop == 4){
+        if(haveweapons.includes("薄めの紙")){
+          document.getElementById('SHOPlog').textContent = 'あなたは薄めの紙を装備しました！';
+          equipweapon = 7;
+          weaponpower = 1;
+        }
+        }
+      else if(nowshop == 5){
+        if(haveweapons.includes("ドア")){
+          document.getElementById('SHOPlog').textContent = 'あなたはドアを装備しました！';
+          equiparmor = 7;
+          armorshell = 5;
+        }
+        else{document.getElementById('SHOPlog').textContent = 'you dont have it!';}
+        break;
+        };
+    case '08':
+      if(nowshop == 4){
+        if(haveweapons.includes("カード")){
+          document.getElementById('SHOPlog').textContent = 'あなたはカードを装備しました！';
+          equipweapon = 8;
+          weaponpower = 1;
+        }
+          break;
+        };
+    case '09':
+      if(nowshop == 4){
+        if(haveweapons.includes("はさみ")){
+          document.getElementById('SHOPlog').textContent = 'あなたははさみを装備しました！';
+          equipweapon = 9;
+          weaponpower = 7;
+        }
+          break;
+        };
+    case '10':
+      if(nowshop == 4){
+        if(haveweapons.includes("ナイフ")){
+          document.getElementById('SHOPlog').textContent = 'あなたはナイフを装備しました！';
+          equipweapon = 10;
+          weaponpower = 8;
+        }
+          break;
+        };
+    }
+    document.getElementById('ShopInputText').value = '';
+}
 function GoToBossBattle(){
     document.getElementById('BattleScene').innerHTML = '<button class="button" onclick="TenBossBattleStart()">10LV Boss</button><br><br><br><br><button class="button" id="GoToCity" onclick="BackToCityFromBossBattle()">Go To City</button>';
 }
