@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Danmaku Game</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+    }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Player object
+    const player = {
+        x: canvas.width / 2,
+        y: canvas.height - 50,
+        width: 50,
+        height: 50,
+        color: 'blue'
+    };
+
+    // Bullets array
+    const bullets = [];
+    // Update bullet positions
+    function updateBullets() {
+        bullets.forEach((bullet, index) => {
+            bullet.y += bullet.speed;
+            if (bullet.y - bullet.radius > canvas.height) {
+                bullets.splice(index, 1);
+            }
+        });
+    }
+
+    // Draw function
+    function draw() {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw player
+        ctx.fillStyle = player.color;
+        ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+
+        // Draw bullets
+        bullets.forEach(bullet => {
+            ctx.beginPath();
+            ctx.fillStyle = bullet.color;
+            ctx.arc(bullet.x, bullet.y, bullet.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.closePath();
+        });
+    }
+
+    // Game loop
+    function gameLoop() {
+        updateBullets();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Function to create new bullet
+    function createBullet() {
+        bullets.push({
+            x: Math.random() * canvas.width,
+            y: 0,
+            radius: 5,
+            color: 'red',
+            speed: [Math.floor(Math.random() * 2) + 1] * 7
+        });
+    }
+
+    // Create new bullets at regular intervals
+    setInterval(createBullet, 100);
+
+    // Event listener for mouse movement
+    window.addEventListener('mousemove', updatePlayerPosition);
+    function updatePlayerPosition(event) {
+        player.x = event.clientX;
+        player.y = event.clientY;
+    }
+
+    // Start the game loop
+    gameLoop();
+</script>
+</body>
+</html>
