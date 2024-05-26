@@ -1,20 +1,5 @@
 // util.js
 
-// HTMLエレメントを取得
-const chatbox = document.getElementById('chatbox');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-
-// メッセージを送信する関数
-function sendMessage() {
-  const message = messageInput.value.trim();
-  if (message) {
-    // サーバーにメッセージを送信する (Ajax通信)
-    sendMessageToServer(message);
-    messageInput.value = ''; // 入力欄を空にする
-  }
-}
-
 // サーバーにメッセージを送信する関数 (Ajax通信)
 function sendMessageToServer(message) {
   const xhr = new XMLHttpRequest();
