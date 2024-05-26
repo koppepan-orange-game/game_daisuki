@@ -1,8 +1,8 @@
 <?php
 // データベースに接続する
 $servername = "localhost";
-$username = "your_username";
-$password = "your_password";
+$username = "koppepanorange";
+$password = "Gmailmal888";
 $dbname = "chat_database";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
