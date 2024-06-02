@@ -89,32 +89,6 @@ function delay(ms) {
 
 // beginで名前とか全部やります
 async function begin(){
-        money = 0;
-        turn = 0; turncount = 0;
-        bossbattlenow = 0;
-        playerhealth = 100; playermaxhealth = 100;
-        playermp = 50; playermaxmp = 50;
-        playerattack = 20; playerpower = 1;
-        playerdefense = 0; playershell = 1;
-        playercrit = 0.03;
-        playerexp = 0; playerlevel = 1;
-        enemylevel = 1;
-        enemyhealth = 100; enemymaxhealth = 100;
-        enemyattack = 10;
-        enemydefense = 0;
-        w = 0; x = 0; y = 0; z = 0;
-        magic1 = 0; magic2 = 0; magic3 = 0; learnedmagic = 0;
-        potion = 3; bomb = 3; skipcard = 3;
-        skillcooldown = 100;
-        playerbuff = 0; playerskillbuff = 0;
-        enemydebuff = 0; enemyskilldebuff = 0;
-        bufftekiou();
-        document.getElementById('EnemyLevel').textContent = enemylevel;
-        document.getElementById('PlayerLevel').textContent = playerlevel;
-        document.getElementById('PlayerMaxHealth').textContent = playermaxhealth;
-        document.getElementById('EnemyMaxHealth').textContent = enemymaxhealth;
-        tekiou();
-
     if (document.getElementById('NameInputText').value !== ''){playername = document.getElementById('NameInputText').value;}
     document.getElementById('PlayerName').textContent = playername;
     if (playername == 'greenslime'){
@@ -164,17 +138,66 @@ async function begin(){
         // PS mpが低いが、会心率が少し高い。
         // SS 攻撃によって相手の体力が半分以下になった時、追撃する。(攻撃力の0.7倍)
     };
-
     document.getElementById('Thisdisappearsafterthegamestartbegin').innerHTML = ' ';
     document.getElementById('Thisdisappearsafterthegamestartnameinput').innerHTML = ' ';
     document.getElementById('BackButtonDesu').innerHTML = '<button align="center" class="button" onclick="GoToCity()">Back</button>';
+    document.getElementById('StatusAppearDisappear').innerHTML = '<button class="button" id="StatusButton" onclick="StatusAppear()">status</button>';
+    document.getElementById('Status').textContent = '';
+    reset();
+}
+async function reset(){
+    money = 0;
+    turn = 0; turncount = 0;
+    bossbattlenow = 0;
+    playerhealth = 100; playermaxhealth = 100;
+    playermp = 50; playermaxmp = 50;
+    playerattack = 20; playerpower = 1;
+    playerdefense = 0; playershell = 1;
+    playercrit = 0.03;
+    playerexp = 0; playerlevel = 1;
+    enemylevel = 1;
+    enemyhealth = 100; enemymaxhealth = 100;
+    enemyattack = 10;
+    enemydefense = 0;
+    w = 0; x = 0; y = 0; z = 0;
+    magic1 = 0; magic2 = 0; magic3 = 0; learnedmagic = 0;
+    potion = 3; bomb = 3; skipcard = 3;
+    skillcooldown = 100;
+    playerbuff = 0; playerskillbuff = 0;
+    enemydebuff = 0; enemyskilldebuff = 0;
+    bufftekiou();
+    switch(playername){
+    case 'greenslime':
+        playermaxmp = 35;
+        playermp = playermaxmp;
+        playerdefense = 5;
+        break;
+    case 'mechanic':
+        playermaxhealth = 60;
+        playerhealth = playermaxhealth;
+        playerattack = 15;
+        break;
+    case 'clown':
+        playercrit = 0.09;
+        break;
+    case 'herta':
+        playermaxmp = 30;
+        playermp = playermaxmp;
+        playercrit = 0.07;
+        break;
+    }
+    document.getElementById('EnemyLevel').textContent = enemylevel;
+    document.getElementById('PlayerLevel').textContent = playerlevel;
+    document.getElementById('PlayerMaxHealth').textContent = playermaxhealth;
+    document.getElementById('EnemyMaxHealth').textContent = enemymaxhealth;
+    tekiou();
     document.getElementById('log').textContent = 'ゲーム開始です！！';
     if(playerskillbuff == 1){greenslimecopybreak();};
     if(playername == 'mechanic'){mechanicturretbreak();};
     await delay(1000);
     enemyname = enemynames[Math.floor(Math.random() * enemynames.length)];
     document.getElementById("EnemyName").textContent = enemyname;
-    tekiou(); turncountincrease(); playerturn();
+    turncountincrease(); playerturn();
 }
 function restart(){document.getElementById('PlayerName').textContent = playername;tekiou();document.getElementById('log').textContent = 'バトル再開です！';if(playerskillbuff == 1){greenslimecopybreak();};if(playername == 'mechanic'){mechanicturretbreak();};window.setTimeout(playerturn,500);}
 let lowedplayerattack = 0; let lowedplayerdefense = 0; let lowedplayermaxmp = 0; let lowedplayermaxhealth = 0; let lowedplayerlevel = 0;
@@ -1069,7 +1092,7 @@ async function Enemyattack() {
     x = enemyattack;
     x -= (playerdefense * playershell + armorshell);
     if(x < 0){x = 0};
-    z = Math.floor(Math.random() * 35); // 1/35
+    z = Math.floor(Math.random() * 2); // 1/35
     if(z == 0){x += (playerdefense * playershell + armorshell); x *= 3; document.getElementById('log').textContent = '痛恨の一撃!'; await delay(1000);};
     y = (x * [Math.random() *0.1]);
     y *= [Math.random() < 0.5 ? -1 : 1]; //1か-1を出力する装置
@@ -1211,7 +1234,7 @@ function defeat() {
     if (playerlevel < 3){saydefeats = ['あはは..負けちゃいましたね....防御力を上げると良いですよ!', 'あはは..負けちゃいましたね....double slashは運要素も少ないので強いですよ!', 'あはは..負けちゃいましたね....魔法にターン数制限はありません!いっぱい使っちゃいましょう!','あはは..負けちゃいましたね....mechanicは防御全振りで戦うと良いですよ!','あはは..負けちゃいましたね....zombieは生き返ることができるのでそれで慣れると良いですよ!'];}
     else {saydefeats = [playername + 'は力尽きた...残念でしたね！にはははは〜！', playername + 'は..まけました', '残念だったね!すごい惜しかったね!!', 'まけちゃったか..ねぇ、もう一回、やってみない?','あれあれ〜？まけちゃったんですか〜？？よっわw'];}
     document.getElementById('log').textContent = saydefeats[Math.floor(Math.random() * saydefeats.length)];
-    window.setTimeout(reset, 2000)
+    window.setTimeout(begin, 2000)
 }
 async function errorcheck(){if(playerattack == Infinity || playerdefense == Infinity || playerhealth == Infinity ||  playermaxhealth == Infinity || playerlevel == Infinity || playerpower == Infinity || playermaxmp == Infinity || playershell == Infinity || isNaN(playerhealth) || isNaN(playermaxhealth) || isNaN(playerattack) || isNaN(playerdefense) || isNaN(playermaxmp) || isNaN(playerpower) || isNaN(playershell) || isNaN(playerlevel) || potion == Infinity || money == Infinity || bomb == Infinity || skipcard == Infinity || isNaN(potion) || isNaN(money) || isNaN(bomb) || isNaN(skipcard)){document.getElementById('log').textContent = 'error100が発生しました。'; await delay(1000); document.getElementById('log').textContent = 'リブートを開始します。'; await delay(1000); open('about:blank', '_self').close();}} //おっとこれは...?}
 function StatusAppear() {
