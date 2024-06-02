@@ -1069,7 +1069,7 @@ async function Enemyattack() {
     x = enemyattack;
     x -= (playerdefense * playershell + armorshell);
     if(x < 0){x = 0};
-    z = Math.floor(Math.random() * 2); // 1/35
+    z = Math.floor(Math.random() * 35); // 1/35
     if(z == 0){x += (playerdefense * playershell + armorshell); x *= 3; document.getElementById('log').textContent = '痛恨の一撃!'; await delay(1000);};
     y = (x * [Math.random() *0.1]);
     y *= [Math.random() < 0.5 ? -1 : 1]; //1か-1を出力する装置
