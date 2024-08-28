@@ -1,0 +1,27 @@
+@font-face{
+    font-family:comicsans;src:url('Ldfcomicsans-jj7l.ttf');
+}
+*{
+    font-family:comicsans;
+    margin:0 auto;
+    text-align:center;
+}
+.offskillbutton{
+  border: 2px solid #6d6d6d;
+  padding: 2px 3px;
+  background: #c9c9c9;
+  cursor: pointer;
+} 
+
+#playerUI{
+    position: fixed;
+    left: 30px;
+    top: 20px;
+    border: dashed rgb(73, 73, 73);
+}
+#enemyUI{
+    position: fixed;
+    right: 30px;
+    top: 20px;
+    border: dashed rgb(73, 73, 73);
+}/* こいつらは使おうと思ったけどあんま利用価値ないから形だけ居るやつ。幽霊部員的な */

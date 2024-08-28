@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe You</title>
+</head>
+<body>
+    <div id="syuturyoku"></div>
+    <script>
+        // localStorageからデータを取得
+        let Aspirin = localStorage.getItem('Aspirin');
+        let Pablon = localStorage.getItem('Pablon');
+        let Trypsin = localStorage.getItem('Trypsin');
+        let Lulu = localStorage.getItem('Lulu');
+        let Potion = localStorage.getItem('Potion');
+        let ThrowKnife = localStorage.getItem('ThrowKnife');
+        let TrickyVariable = localStorage.getItem('TrickyVariable');
+        let BottleGrenade = localStorage.getItem('BottleGrenade');
+        let CoveringFire = localStorage.getItem('CoveringFire');
+        let Bomb = localStorage.getItem('Bomb');
+        let Redcard = localStorage.getItem('Redcard');
+        let Bluecard = localStorage.getItem('Bluecard');
+        let Greencard = localStorage.getItem('Greencard');
+        let Blackcard = localStorage.getItem('Blackcard');
+
+        document.getElementById('syuturyoku').innerHTML = "アスピリン:" + Aspirin + "<br>パブロン:" + Pablon + "<br>トリプシン:" + Trypsin + "<br>ルル:" + Lulu + "<br>ポーション:" + Potion + "<br>投げナイフ:" + ThrowKnife + "<br>トリッキーな変数:" + TrickyVariable + "<br>ボトルグレネード:" + BottleGrenade + "<br>援護射撃ライセンス:" + CoveringFire + "<br>爆弾:" + Bomb + "<br>赤のスキップ" + Redcard + "<br>青のリバース" + Bluecard + "<br>緑のドロアル" + Greencard + "<br>緑のドロスー" + Blackcard;
+    </script>
+</body>
+</html>
+

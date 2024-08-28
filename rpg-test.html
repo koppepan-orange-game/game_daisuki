@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>clicker of mugen</title>
+  <html lang="ja">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="rpg-moromoro.css">
+</head>
+<body>
+  <br><br><br>
+  <p align="center" class="rpg">
+    <style id="ButtonStyle"></style>
+    <div id="GameScene">
+      <span>turn:</span><span id="TurnCount">0</span>
+      <br><b id="EnemyName">enemy</b>   <i>Lv.</i><i id="EnemyLevel">1</i>
+      <br><span id="EnemyHealth">0</span>/<span id="EnemyMaxHealth">0</span>
+      <br><span id="EnemyBuff"></span> <span id="EnemyDebuff"></span>
+      <span id="PlayerFriendFront"></span>
+      <br><br><b id="PlayerName">player</b>   <i>Lv.</i><i id="PlayerLevel">1</i>  <span id="AdditionalPlayerPoint"></span>
+      <br><span id="PlayerHealth">0</span>/<span id="PlayerMaxHealth">0</span>
+      <br><span id="PlayerBuff"></span> <span id="PlayerDebuff"></span>
+      <span id="PlayerFriendBack"></span>
+      <br><br><br>
+      <button class="button" id="select1" onclick="select1()">attack</button>  
+      <button class="button" id="select2" onclick="select2()">magic</button>
+      <button class="button" id="select3" onclick="select3()">tools</button>
+      <button class="button" id="back" onclick="back()">pass</button>
+      <br><span id="Skillbutton"></span>
+      <br><br><span align="center" id="log"></span>
+      <br><span id="StatusAppearDisappear"><button class="button" id="StatusButton" onclick="StatusAppear()">status</button></span>
+      <br><span id="Status"></span>
+    </div>
+    <div id="CampArea" ></div><br><span id="Camplog" ></span>
+    <div id="EventArea"></div><br><span id="Eventlog"></span>
+  <div id="Thisdisappearsafterthegamestarts">
+    <button class="button" onclick="begin('greenslime')">GreenSlime</button><button class="button" onclick="begin('mechanic')">Mechanic</button><button class="button" onclick="begin('clown')">Clown</button><button class="button" onclick="begin('herta')">Herta</button><br>
+    <button class="button">Geld</button><br>
+    <button class="button" onclick="begin('wretch')">The have-nots ー持たざる者ー</button>
+  </div>
+</p>
+<script src="rpg-moromoro.js"></script>
+</body>
+</html>
+<!-- <br><br><br><br><span id="Thisappearsafterthegamestartsreset"> </span>
+     document.getElementById('Thisappearsafterthegamestartsreset').innerHTML = '<button align="center" class="button" onclick="reset()">reset</button>'; 
+    この二つは一旦消してみたけど評判によっては戻す-->
