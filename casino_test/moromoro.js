@@ -367,6 +367,7 @@ function SLtekiou(){
 
 }
 async function SLstart(){
+    document.getElementById('log').textContent = '';
     if(bet*base <= euro){
         document.getElementById('SLCommandButtons').innerHTML = `<button class="SLbutton" onclick="slrolling+=1;">stop</button>`;
         euro -= bet*base;
