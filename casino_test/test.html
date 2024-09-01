@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>blackjack-daisuki</title>
+  <html lang="ja">
+  <meta charset="UTF-8">
+  <script src="moromoro.js"></script>
+  <style>
+    #GameZone{
+      border: 1px solid #000000;
+      width: 500px;
+      padding: 20px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    #MiniGameArea{
+      border: 1px solid #eee;
+      width: 400px;
+      padding: 10px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .farmbutton{
+      border: 1px solid #6ae382;
+      padding: 2px 3px;
+      background:#d0af75;
+      cursor: grab;
+    }
+    #UIinfo {
+      border: 1px solid #000;
+      width: 150px;
+      padding: 3px;
+      text-align: left;
+    }
+    #UIfield {
+      border: 1px solid #000;
+      width: 200px;
+      padding: 3px;
+      text-align: left;
+    }
+    .casinobutton{
+      border: 1px solid #ff4040;
+      padding: 2px 3px;
+      background:#27c848;
+      cursor: grab;
+    }
+    #SLmain{
+      border: 1px solid #a1a1a1;
+      width: 200px;
+      padding: 10px;
+      margin: 0 auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="GameZone">
+  <span id="PlayerMoney">euro:0€</span><br>
+  <div id="MiniGameArea">
+    <div style="display: flex;">
+      <div id="UIinfo"><img src='assets/wheat.png' style='width: 15px; height: 15px;'>0<br><img src='assets/carrot.png' style='width: 15px; height: 15px;'>0<br><img src='assets/potato.png' style='width: 15px; height: 15px;'>0<br><img src='assets/apple.png' style='width: 15px; height: 15px;'>0<br><img src='assets/goldapple.png' style='width: 15px; height: 15px;'>0</div>
+      <div id="UIfield"></div>
+    </div>
+    <div id="shops" style="text-align: left;">SHOP<br>
+        <button class="farmbutton" onclick="BuyTool()">Buy<img src="assets/hoe.png" style="width: 15px; height: 15px;"><span id="Toolprice">200€</span></button><br>
+        <button class="farmbutton" onclick="BuyField()">Buy field<img src="assets/field.png" style="width: 15px; height: 15px;"><span id="Fieldprice">100€</span></button><br>
+        <button class="farmbutton" onclick="SellAll()">Sell all<img src="assets/euro.png" style="width: 15px; height: 15px;"></button>
+    </div>
+  </div>
+  <span id="log"></span><br>
+  <button id="BackButton" onclick="Back()">go to casino</button>
+  </div>
+</body>
+</html>
