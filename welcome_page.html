@@ -1,37 +1,12 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>What do you want to play?</title></head>
 <body>
-<input type="text" id="inputText" placeholder="さて、合言葉は？">
-  <button onclick="showOutput()">送信</button>
-  <p id="output"></p>
-<script>
-    function showOutput() {
-    const input = document.getElementById('inputText').value;
-    const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '';
-  
-    let redirectUrl;if (input.includes('readme')) {
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/readme.txt';
-    } else if (input.includes('blackjack')) {
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/blackjack.html';
-    } else if(input.includes('clickerofmugen')){
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen.html';
-    } else if(input.includes('crickerofmugen')){
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/cricker_of_mugen.html';
-    } else if(input.includes('breakclickerofmugen')){
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/break_clicker_of_mugen.html';
-    }　else if(input.includes('danmaku')){
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/danmaku_test.html';
-    } else if(input.includes('drinkshop')){
-      redirectUrl = 'https://koppepan-orange-game.github.io/game_daisuki/cat_drink_shop/drinkshop.html';
-    } else {
-      'パスワードが違います。';
-    }
-    const link = document.createElement('a')
-    link.href = redirectUrl;
-    link.textContent = 'success!';
-    link.target = '_blank'; // 新しいタブで開く
-    outputDiv.appendChild(link)
-    }
-</script>
+  Welcome To My Game-Park!!<br>
+  <ul>
+    <li><a target="_blank" href="https://koppepan-orange-game.github.io/game_daisuki/readme.txt">read.me</a></li>
+    <li><a target="_blank" href="https://koppepan-orange-game.github.io/game_daisuki/blackjack.html">blackjack</a></li>
+    <li><a target="_blank" href="https://koppepan-orange-game.github.io/game_daisuki/clicker_of_mugen.html">clicker_of_mugen</a></li>
+    <li><a target="_blank" href="https://koppepan-orange-game.github.io/game_daisuki/danmaku_test.html">danmaku-test</a></li>
+  </ul>
 </body>
+</html>
